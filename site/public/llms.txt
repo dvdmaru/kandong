@@ -8,9 +8,9 @@
 - [字幕指南](https://kandong.twtools.cc/articles/)：依字幕來源選擇處理流程。
 
 ## 影片與字幕問題
-- [影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕](https://kandong.twtools.cc/articles/no-chinese-subtitles/)：串流平台先看原有字幕選項；自己的影片檔有原文字幕就翻譯，完全沒字幕才先聽寫。比較各種做法的適用情況、限制與授權界線。
+- [影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕](https://kandong.twtools.cc/articles/no-chinese-subtitles/)：串流平台先找平台提供的字幕；自己的影片檔有英文字幕就直接翻成繁中，完全沒字幕才需要先聽寫。看懂不支援 Netflix 等串流，也不做圖形字幕 OCR。
 - [MKV 內嵌字幕怎麼變雙語？文字軌直接翻，圖形軌改聽寫](https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/)：看懂可翻譯 MKV 內嵌文字字幕，保留原文並加上繁中譯文。先選對字幕軌，再排查圖形字幕、燒錄字幕、翻譯開關與快取的差異。
-- [沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中](https://kandong.twtools.cc/articles/auto-chinese-subtitles/)：無字幕影片需要先語音辨識，再翻譯成繁中。看懂的本機流程、Whisper 與 Hy-MT2 分工、模型準備、字幕延遲與辨識錯誤排查。
+- [沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中](https://kandong.twtools.cc/articles/auto-chinese-subtitles/)：沒字幕的影片要先用 Whisper 把對白聽寫成原文，再用 Hy-MT2 翻成繁中；除了翻譯模型，還要多下載約 574MB 的語音辨識模型。
 
 ## 使用支援
 - [常見問題](https://kandong.twtools.cc/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、模型選單尚未實作、連線、快取與本機處理的前提。
