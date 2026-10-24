@@ -1,0 +1,17 @@
+{
+  "actual_exit_code": 1,
+  "output": {
+    "simplified_only": [
+      "没",
+      "视",
+      "译",
+      "请",
+      "败",
+      "轻",
+      "载",
+      "这",
+      "频"
+    ],
+    "pass": false
+  }
+}

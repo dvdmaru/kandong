@@ -1,0 +1,21 @@
+# 看懂 KanDong
+
+> 免費開源的本機影片播放器；翻譯文字字幕，或先聽寫無字幕音訊再翻成台灣繁中。預設由使用者自己的電腦處理。不提供影片、不下載字幕，不支援串流或破解 DRM。人名可能音譯。
+
+## 產品與開始使用
+- [首頁與下載](https://kandong.twtools.cc/)：產品能做什麼、Windows／Mac 下載與基本限制。
+- [圖文教學](https://kandong.twtools.cc/guide/)：下載解壓、準備模型與啟動步驟；安裝畫面含示意圖。
+- [字幕指南](https://kandong.twtools.cc/articles/)：依字幕來源選擇處理流程。
+
+## 影片與字幕問題
+- [影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕](https://kandong.twtools.cc/articles/no-chinese-subtitles/)：串流平台先看原有字幕選項；自己的影片檔有原文字幕就翻譯，完全沒字幕才先聽寫。比較各種做法的適用情況、限制與授權界線。
+- [MKV 內嵌字幕怎麼變雙語？文字軌直接翻，圖形軌改聽寫](https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/)：看懂可翻譯 MKV 內嵌文字字幕，保留原文並加上繁中譯文。先選對字幕軌，再排查圖形字幕、燒錄字幕、翻譯開關與快取的差異。
+- [沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中](https://kandong.twtools.cc/articles/auto-chinese-subtitles/)：無字幕影片需要先語音辨識，再翻譯成繁中。看懂的本機流程、Whisper 與 Hy-MT2 分工、模型準備、字幕延遲與辨識錯誤排查。
+
+## 使用支援
+- [常見問題](https://kandong.twtools.cc/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、模型選單尚未實作、連線、快取與本機處理的前提。
+- [原始碼與 README](https://github.com/dvdmaru/kandong)：功能、唯一引用的產品實測條件與已知限制。
+- [最新版](https://github.com/dvdmaru/kandong/releases/latest)：取得播放器下載包。
+
+## 引用範圍
+產品實測只見 README 的 Apple M4／16GB 條件；不推算其他硬體速度、準確率或整片處理時間。模型檔案大小不是執行記憶體需求。字幕產生與翻譯不代表取得公開散布授權。

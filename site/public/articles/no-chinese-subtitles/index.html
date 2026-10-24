@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hant-TW"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕｜看懂 KanDong</title>
+<meta name="description" content="串流平台先看原有字幕選項；自己的影片檔有原文字幕就翻譯，完全沒字幕才先聽寫。比較各種做法的適用情況、限制與授權界線。">
+<link rel="canonical" href="https://kandong.twtools.cc/articles/no-chinese-subtitles/"><link rel="stylesheet" href="/reading.css">
+<meta property="og:type" content="article">
+<meta property="og:title" content="影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕">
+<meta property="og:description" content="串流平台先看原有字幕選項；自己的影片檔有原文字幕就翻譯，完全沒字幕才先聽寫。比較各種做法的適用情況、限制與授權界線。">
+<meta property="og:url" content="https://kandong.twtools.cc/articles/no-chinese-subtitles/"><meta property="og:site_name" content="看懂 KanDong">
+<meta property="og:image" content="https://kandong.twtools.cc/img/og.png"><meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image"><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "@id": "https://kandong.twtools.cc/articles/no-chinese-subtitles/#article", "headline": "影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕", "description": "串流平台先看原有字幕選項；自己的影片檔有原文字幕就翻譯，完全沒字幕才先聽寫。比較各種做法的適用情況、限制與授權界線。", "inLanguage": "zh-TW", "datePublished": "2026-10-24T23:45:00+08:00", "dateModified": "2026-10-24T23:45:00+08:00", "author": {"@type": "Organization", "name": "看懂 KanDong", "url": "https://kandong.twtools.cc/"}, "publisher": {"@type": "Organization", "name": "看懂 KanDong", "url": "https://kandong.twtools.cc/"}, "mainEntityOfPage": "https://kandong.twtools.cc/articles/no-chinese-subtitles/", "image": ["https://kandong.twtools.cc/img/watching.jpg"], "isAccessibleForFree": true}]}</script>
+</head><body>
+<a class="skip" href="#main">跳到內容</a>
+<header><div class="nav"><a class="brand" href="/">懂 <span>看懂 KanDong</span></a>
+<nav aria-label="主選單"><a href="/articles/">字幕指南</a><a href="/guide/">圖文教學</a><a href="/faq/">常見問題</a><a class="button" href="/#download">免費下載</a></nav></div></header>
+<main id="main"><article>
+<p class="eyebrow">看懂・字幕指南</p>
+<h1>影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕</h1>
+<div class="quick-answer"><strong>重點速答</strong><p>影片沒中文字幕，先看影片在哪裡：串流平台用平台提供的字幕選項；有權處理的本機檔案，有文字字幕就翻譯，沒字幕就先語音辨識再翻譯。看懂 KanDong 處理本機影片檔，不支援 Netflix 等串流平台。</p></div>
+<p class="byline">看懂 KanDong · <time datetime="2026-10-24">2026-10-24</time>（台北時間）</p>
+
+<p>畫面明明有英文，播放器卻找不到中文字幕。先別急著換工具：英文可能是可選的字幕軌，也可能已經印在影像上。看起來相同，能用的做法差很多。</p>
+<h2 id="choose">先看影片在哪裡，再決定要翻字還是聽聲音</h2>
+<div class="options">
+<section><h3>正在串流平台上看</h3><p>先開平台的音訊與字幕選單。若影片提供你要的字幕，直接選就能看，不必另外跑模型。</p><p><strong>好處：</strong>沿用平台播放流程。<strong>限制：</strong>只能選平台提供的語言；看懂不攔截串流，也不破解數位版權管理（DRM）。</p></section>
+<section><h3>自己的影片檔已有原文文字字幕</h3><p>有權處理的影片與字幕，可以交給看懂翻譯。外掛 SRT、ASS、WebVTT，以及 MKV 內嵌文字字幕都在支援範圍內。</p><p><strong>好處：</strong>沿用字幕已有的文字與時間軸。<strong>限制：</strong>原文字幕若漏句或時間不對，翻譯不會把原始問題一起修好。</p></section>
+<section><h3>檔案沒字幕，或只有圖形字幕</h3><p>先用語音辨識（ASR）聽寫原文，再把原文翻成繁中。看懂使用 whisper.cpp 做聽寫，Hy-MT2 做翻譯。</p><p><strong>好處：</strong>不必先有文字字幕。<strong>限制：</strong>多一道聽寫；聽錯的原文會連帶影響譯文。看懂不做圖形字幕的文字辨識（OCR）。</p></section>
+</div>
+<h2 id="streaming">平台有字幕選單，也不代表每部片都有中文</h2>
+<p>以 Netflix 為例，<a href="https://help.netflix.com/zh-tw/node/372">官方說明</a>是從播放畫面的「音訊和字幕」選擇該片提供的語言。選單裡沒有中文，就不能靠看懂替串流畫面加上翻譯。</p>
+<p>這時若仍想在平台觀看，先查平台對該片的字幕支援。若手邊另有自製或取得相應處理授權的本機檔案，才走下面的本機流程。</p>
+<h2 id="text">檔案已有英文字幕，就不必重新聽寫</h2>
+<p>把影片拖進看懂，選好原文字幕軌，開啟翻譯。原文保留在畫面上，繁中譯文加在下方；能取得字幕全文時，程式會超前預譯，翻好的內容快取在影片旁。</p>
+<p>MKV 是檔案封裝格式，副檔名本身不能告訴你字幕是哪一種。先在字幕選單確認：有可讀取的文字軌，才走直接翻譯；只有圖形字幕，則改從音訊聽寫。操作可接著看<a href="/articles/mkv-bilingual-subtitles/">MKV 內嵌字幕變雙語教學</a>。</p>
+<h2 id="audio">完全沒字幕，要先讓聲音變成文字</h2>
+<p>只有翻譯模型還不夠。你也需要語音辨識模型，讓看懂先取得對白文字，再翻成中文字幕。具體安裝與排查步驟在<a href="/articles/auto-chinese-subtitles/">無字幕影片產生中文字幕教學</a>。</p>
+<p>如果只是燒錄在影像上的字，畫面上看得到，字幕選單卻沒有可用文字軌，看懂也不會去讀影像裡的字。走聽寫時，生成的字幕跟著聲音走，不會保留畫面上原有字幕的排版。</p>
+<h2 id="rights">能翻譯，不代表能把譯文公開散布</h2>
+<p>本文的本機流程以自製或已取得相應處理授權的影片、字幕為前提。<a href="https://www.tipo.gov.tw/tw/copyright/692-16773.html">智慧財產局的公開網站加譯字幕案例</a>指出，加入翻譯字幕可能涉及重製、改作及公開傳輸，須分辨授權與合理使用。該案例不能直接當成所有私人使用情況的結論。</p>
+<p>想選最省事的做法，就先找現成可用的字幕選項。已有原文文字字幕，直接翻譯；缺少文字字幕，才多做聽寫。工具的選擇跟著素材走。</p>
+<section class="sources"><h2>來源與適用範圍</h2><ul><li><a href="https://github.com/dvdmaru/kandong/blob/7effeb9e3da2fde611f6f068cf71198e98e6a9ff/README.md">看懂 README：字幕來源、聽寫、串流與圖形字幕限制</a></li></ul><p>看懂功能以本次連結的 README 與原始碼版本為準；新版介面與行為可能調整。</p></section>
+<aside class="cta" aria-label="開始使用"><h2>準備好自己的影片檔，再開始</h2><p>先照圖文教學完成設定，再挑適合字幕來源的流程。</p><div class="actions"><a class="button" href="/guide/">看圖文教學</a><a class="button secondary" href="https://github.com/dvdmaru/kandong/releases/latest">下載最新版</a></div></aside>
+</article></main><footer><a href="/articles/">字幕指南</a> · <a href="/faq/">常見問題</a> · <a href="https://github.com/dvdmaru/kandong">GitHub 原始碼</a> · <a href="https://twtools.cc/">TWTools</a></footer>
+</body></html>

@@ -1,0 +1,1403 @@
+{
+  "base": "http://127.0.0.1:7826",
+  "checkedAt": "2026-10-24T15:51:57.746Z",
+  "pages": [
+    {
+      "route": "/",
+      "title": "看懂 KanDong｜影片沒中文字幕？一看就懂",
+      "h1": "影片沒中文字幕？一看就懂。",
+      "h1count": 1,
+      "nextAfterH1": "",
+      "canonical": "https://kandong.twtools.cc/",
+      "blocks": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "看懂 KanDong",
+          "alternateName": "KanDong",
+          "description": "影片沒中文字幕？一看就懂。播你自己的影片檔，自動在原文字幕下方加上台灣繁中譯文；沒字幕的片先語音辨識再翻譯。翻譯在使用者自己的電腦上執行。",
+          "applicationCategory": "MultimediaApplication",
+          "operatingSystem": "Windows 10, Windows 11, macOS",
+          "softwareVersion": "0.2.0",
+          "inLanguage": "zh-TW",
+          "isAccessibleForFree": true,
+          "license": "https://opensource.org/licenses/MIT",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TWD"
+          },
+          "url": "https://kandong.twtools.cc/",
+          "downloadUrl": "https://github.com/dvdmaru/kandong/releases/latest",
+          "codeRepository": "https://github.com/dvdmaru/kandong",
+          "screenshot": "https://kandong.twtools.cc/img/watching.jpg"
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "要錢嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "影片或字幕會被上傳嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "這是看片網站嗎？能看 Netflix 嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "我的電腦跑得動嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "翻得準嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。"
+              }
+            }
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "要錢嗎？",
+          "a": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。"
+        },
+        {
+          "q": "影片或字幕會被上傳嗎？",
+          "a": "預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。"
+        },
+        {
+          "q": "這是看片網站嗎？能看 Netflix 嗎？",
+          "a": "都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。"
+        },
+        {
+          "q": "我的電腦跑得動嗎？",
+          "a": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。"
+        },
+        {
+          "q": "翻得準嗎？",
+          "a": "人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。"
+        }
+      ],
+      "images": [
+        {
+          "src": "img/watching.jpg",
+          "loaded": true
+        },
+        {
+          "src": "img/controls.jpg",
+          "loaded": true
+        },
+        {
+          "src": "img/menu-subtitles.jpg",
+          "loaded": true
+        },
+        {
+          "src": "img/tracks.jpg",
+          "loaded": true
+        }
+      ],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "route": "/guide/",
+      "title": "圖文教學：三步開始用看懂｜看懂 KanDong",
+      "h1": "第一次用看懂，三步就能看",
+      "h1count": 1,
+      "nextAfterH1": "",
+      "canonical": "https://kandong.twtools.cc/guide/",
+      "blocks": [
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "說缺少「Visual C++ 可轉散發套件」",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "翻譯引擎需要微軟的這個元件。照畫面開的微軟官方頁面，下載 X64 版（vc_redist.x64.exe）安裝，再雙擊「看懂」。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "翻譯引擎沒有成功啟動",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "先查記憶體與模型檔是否完整；可改用輕量模型（一鍵下載選 2）。兩個翻譯模型都放的話，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "左上角出現「翻譯伺服器連線失敗」",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "請用「看懂」啟動，不要直接開 mpv.exe：「看懂」會先把翻譯引擎開好。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "沒字幕的片沒有出現字幕",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "需要語音辨識模型（一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "還是不行？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "到 GitHub Issues 開一則，附上作業系統、影片格式、畫面上的訊息，和 logs 資料夾裡的記錄。"
+              }
+            }
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "說缺少「Visual C++ 可轉散發套件」",
+          "a": "翻譯引擎需要微軟的這個元件。照畫面開的微軟官方頁面，下載 X64 版（vc_redist.x64.exe）安裝，再雙擊「看懂」。"
+        },
+        {
+          "q": "翻譯引擎沒有成功啟動",
+          "a": "先查記憶體與模型檔是否完整；可改用輕量模型（一鍵下載選 2）。兩個翻譯模型都放的話，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。"
+        },
+        {
+          "q": "左上角出現「翻譯伺服器連線失敗」",
+          "a": "請用「看懂」啟動，不要直接開 mpv.exe：「看懂」會先把翻譯引擎開好。"
+        },
+        {
+          "q": "沒字幕的片沒有出現字幕",
+          "a": "需要語音辨識模型（一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。"
+        },
+        {
+          "q": "還是不行？",
+          "a": "到 GitHub Issues 開一則，附上作業系統、影片格式、畫面上的訊息，和 logs 資料夾裡的記錄。"
+        }
+      ],
+      "images": [
+        {
+          "src": "../img/watching.jpg",
+          "loaded": true
+        }
+      ],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "route": "/articles/",
+      "title": "字幕指南：從沒有中文字幕，到看懂外語影片｜看懂 KanDong",
+      "h1": "字幕指南：從沒有中文字幕，到看懂外語影片",
+      "h1count": 1,
+      "nextAfterH1": "quick-answer",
+      "quickAnswer": "重點速答串流平台先找平台字幕；本機檔案已有文字字幕就翻譯，沒有文字才聽寫。依手邊影片的情況選一篇，模型選擇與故障排查可直接查常見問題。",
+      "canonical": "https://kandong.twtools.cc/articles/",
+      "blocks": [],
+      "faq": [],
+      "images": [],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "route": "/articles/no-chinese-subtitles/",
+      "title": "影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕｜看懂 KanDong",
+      "h1": "影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕",
+      "h1count": 1,
+      "nextAfterH1": "quick-answer",
+      "quickAnswer": "重點速答影片沒中文字幕，先看影片在哪裡：串流平台用平台提供的字幕選項；有權處理的本機檔案，有文字字幕就翻譯，沒字幕就先語音辨識再翻譯。看懂 KanDong 處理本機影片檔，不支援 Netflix 等串流平台。",
+      "canonical": "https://kandong.twtools.cc/articles/no-chinese-subtitles/",
+      "blocks": [
+        {
+          "@type": "Article",
+          "@id": "https://kandong.twtools.cc/articles/no-chinese-subtitles/#article",
+          "headline": "影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕",
+          "description": "串流平台先看原有字幕選項；自己的影片檔有原文字幕就翻譯，完全沒字幕才先聽寫。比較各種做法的適用情況、限制與授權界線。",
+          "inLanguage": "zh-TW",
+          "datePublished": "2026-10-24T23:45:00+08:00",
+          "dateModified": "2026-10-24T23:45:00+08:00",
+          "author": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "mainEntityOfPage": "https://kandong.twtools.cc/articles/no-chinese-subtitles/",
+          "image": [
+            "https://kandong.twtools.cc/img/watching.jpg"
+          ],
+          "isAccessibleForFree": true
+        }
+      ],
+      "faq": [],
+      "images": [],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "route": "/articles/mkv-bilingual-subtitles/",
+      "title": "MKV 內嵌字幕怎麼變雙語？文字軌直接翻，圖形軌改聽寫｜看懂 KanDong",
+      "h1": "MKV 內嵌字幕怎麼變雙語？文字軌直接翻，圖形軌改聽寫",
+      "h1count": 1,
+      "nextAfterH1": "quick-answer",
+      "quickAnswer": "重點速答MKV 內嵌的是原文文字字幕時，用看懂選好字幕軌並開啟翻譯，就能保留原文、在下方顯示繁中譯文。若內嵌的是 PGS 等圖形字幕，看懂會改走語音辨識再翻譯，不會直接辨識字幕圖片。",
+      "canonical": "https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/",
+      "blocks": [
+        {
+          "@type": "Article",
+          "@id": "https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/#article",
+          "headline": "MKV 內嵌字幕怎麼變雙語？文字軌直接翻，圖形軌改聽寫",
+          "description": "看懂可翻譯 MKV 內嵌文字字幕，保留原文並加上繁中譯文。先選對字幕軌，再排查圖形字幕、燒錄字幕、翻譯開關與快取的差異。",
+          "inLanguage": "zh-TW",
+          "datePublished": "2026-10-24T23:45:00+08:00",
+          "dateModified": "2026-10-24T23:45:00+08:00",
+          "author": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "mainEntityOfPage": "https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/",
+          "image": [
+            "https://kandong.twtools.cc/img/watching.jpg"
+          ],
+          "isAccessibleForFree": true
+        }
+      ],
+      "faq": [],
+      "images": [
+        {
+          "src": "/img/menu-subtitles.jpg",
+          "loaded": true
+        }
+      ],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "route": "/articles/auto-chinese-subtitles/",
+      "title": "沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中｜看懂 KanDong",
+      "h1": "沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中",
+      "h1count": 1,
+      "nextAfterH1": "quick-answer",
+      "quickAnswer": "重點速答沒字幕的本機影片，要先用語音辨識把對白轉成原文，再翻成中文字幕。看懂用 whisper.cpp 聽寫、Hy-MT2 翻譯；除了翻譯模型，還要準備 Whisper large-v3-turbo 語音辨識模型。",
+      "canonical": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/",
+      "blocks": [
+        {
+          "@type": "Article",
+          "@id": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/#article",
+          "headline": "沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中",
+          "description": "無字幕影片需要先語音辨識，再翻譯成繁中。看懂的本機流程、Whisper 與 Hy-MT2 分工、模型準備、字幕延遲與辨識錯誤排查。",
+          "inLanguage": "zh-TW",
+          "datePublished": "2026-10-24T23:45:00+08:00",
+          "dateModified": "2026-10-24T23:45:00+08:00",
+          "author": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "mainEntityOfPage": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/",
+          "image": [
+            "https://kandong.twtools.cc/img/watching.jpg"
+          ],
+          "isAccessibleForFree": true
+        }
+      ],
+      "faq": [],
+      "images": [],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    },
+    {
+      "route": "/faq/",
+      "title": "看懂常見問題：模型怎麼選、字幕沒出現與人名音譯｜看懂 KanDong",
+      "h1": "看懂常見問題：模型怎麼選、字幕沒出現與人名音譯",
+      "h1count": 1,
+      "nextAfterH1": "quick-answer",
+      "quickAnswer": "重點速答選模型先看記憶體；沒字幕的片還需要語音辨識模型。看懂處理本機影片，常見卡關包括選錯字幕類型、引擎未啟動，以及人名被音譯。",
+      "canonical": "https://kandong.twtools.cc/faq/",
+      "blocks": [
+        {
+          "@type": "Article",
+          "@id": "https://kandong.twtools.cc/faq/#article",
+          "headline": "看懂常見問題：模型怎麼選、字幕沒出現與人名音譯",
+          "description": "8GB／16GB 模型選擇、Hy-MT2 與 Whisper 分工、切換模型、平台支援、隱私設定和字幕排查。",
+          "inLanguage": "zh-TW",
+          "datePublished": "2026-10-24T23:45:00+08:00",
+          "dateModified": "2026-10-24T23:45:00+08:00",
+          "author": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "看懂 KanDong",
+            "url": "https://kandong.twtools.cc/"
+          },
+          "mainEntityOfPage": "https://kandong.twtools.cc/faq/",
+          "image": [
+            "https://kandong.twtools.cc/img/watching.jpg"
+          ],
+          "isAccessibleForFree": true
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://kandong.twtools.cc/faq/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "8GB／16GB 記憶體，各選哪個模型？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "依 README 建議：8GB 或較舊的電腦選 Hy-MT2 1.8B 輕量模型，16GB 以上選 7B 標準模型。模型檔分別約 1.1GB、4.6GB；這是檔案大小，不是整套程式的記憶體用量。README 的實測條件是 Apple M4／16GB、含 12 句前文：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒。這些結果不能推算成其他硬體或整部影片的處理時間。要先減輕負擔，可從輕量模型開始；想用標準模型，仍需看其他程式占用的記憶體。查看 README 的模型與實測說明。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Hy-MT2 是什麼？能直接聽影片嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Hy-MT2 是騰訊（Tencent）公開的多語翻譯模型。看懂用它把原文字幕翻成台灣繁中；聽音訊轉文字則由 whisper.cpp 負責。沒字幕的影片需要兩種模型，不能只準備翻譯模型。騰訊官方標準模型卡、輕量模型卡。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "為什麼按「模型」選單不能切換？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "目前「模型」選單只是預告。換模型要調整 models 資料夾裡的模型檔；兩個翻譯模型都在時，啟動器會依記憶體自動挑選。若要固定用輕量模型，先把標準模型移出 models，關閉後再重新啟動看懂。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "人名會保留原文嗎？換大模型能解決嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "不保證。Hy-MT2 常把人名音譯，例如 Marcus 變成「馬庫斯」；換大模型也可能發生。譯名修正仍是之後的計畫，不能當作已完成功能。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "支援哪些電腦？可以看 Netflix 嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "下載包提供 Windows 10／11（64 位元）與 macOS Apple 晶片版；Mac 需要先裝 Homebrew 工具。看懂只處理本機影片檔，不支援 Netflix 等串流平台，不攔截串流，也不破解 DRM。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "影片和字幕會上傳嗎？需要一直連網嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "預設本機設定下，翻譯與語音辨識在自己的電腦執行，影片和字幕不會送到雲端翻譯服務；取得軟體、工具和模型仍需要網路。進階設定若把伺服器指向區網另一台電腦，字幕或聽寫用音訊就會送到那台電腦處理，因此本機處理的前提也會改變。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "影片看得到字幕，為什麼還要語音辨識模型？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "看得到的字可能是 PGS 等圖形字幕，或已燒錄在影像中。看懂不做 OCR；沒有可用文字軌時，改從聲音聽寫再翻譯。先看MKV 字幕類型的分辨方式。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "出現「翻譯伺服器連線失敗」怎麼辦？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "先確認是用「看懂」啟動器開啟，而非直接開播放器執行檔。啟動器會先準備翻譯引擎；若仍失敗，再查模型檔、啟動畫面與 logs 記錄。這個訊息本身不足以判定是哪一種連線問題。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "語音辨識跟不上，字幕一直空白怎麼辦？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "先按 S 回到正常播放速度，確認 Whisper 語音辨識模型已備妥，再讓聽寫繼續。播放超過處理進度或跳轉到未處理段落時可能空白；完整步驟見沒字幕影片聽寫教學。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "翻好的字幕在哪裡？是雙語 SRT 嗎？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "繁中快取在影片旁的 <影片名>.ft.zh-TW.json，完整翻譯後才輸出 .ft.zh-TW.srt；完整聽寫另可存成 .ft.asr.srt。繁中 SRT 是譯文字幕，雙語顯示是在播放器裡把原文與譯文一起呈現，不能把輸出的譯文 SRT 稱作雙語 SRT。"
+              }
+            }
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "8GB／16GB 記憶體，各選哪個模型？",
+          "a": "依 README 建議：8GB 或較舊的電腦選 Hy-MT2 1.8B 輕量模型，16GB 以上選 7B 標準模型。模型檔分別約 1.1GB、4.6GB；這是檔案大小，不是整套程式的記憶體用量。README 的實測條件是 Apple M4／16GB、含 12 句前文：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒。這些結果不能推算成其他硬體或整部影片的處理時間。要先減輕負擔，可從輕量模型開始；想用標準模型，仍需看其他程式占用的記憶體。查看 README 的模型與實測說明。"
+        },
+        {
+          "q": "Hy-MT2 是什麼？能直接聽影片嗎？",
+          "a": "Hy-MT2 是騰訊（Tencent）公開的多語翻譯模型。看懂用它把原文字幕翻成台灣繁中；聽音訊轉文字則由 whisper.cpp 負責。沒字幕的影片需要兩種模型，不能只準備翻譯模型。騰訊官方標準模型卡、輕量模型卡。"
+        },
+        {
+          "q": "為什麼按「模型」選單不能切換？",
+          "a": "目前「模型」選單只是預告。換模型要調整 models 資料夾裡的模型檔；兩個翻譯模型都在時，啟動器會依記憶體自動挑選。若要固定用輕量模型，先把標準模型移出 models，關閉後再重新啟動看懂。"
+        },
+        {
+          "q": "人名會保留原文嗎？換大模型能解決嗎？",
+          "a": "不保證。Hy-MT2 常把人名音譯，例如 Marcus 變成「馬庫斯」；換大模型也可能發生。譯名修正仍是之後的計畫，不能當作已完成功能。"
+        },
+        {
+          "q": "支援哪些電腦？可以看 Netflix 嗎？",
+          "a": "下載包提供 Windows 10／11（64 位元）與 macOS Apple 晶片版；Mac 需要先裝 Homebrew 工具。看懂只處理本機影片檔，不支援 Netflix 等串流平台，不攔截串流，也不破解 DRM。"
+        },
+        {
+          "q": "影片和字幕會上傳嗎？需要一直連網嗎？",
+          "a": "預設本機設定下，翻譯與語音辨識在自己的電腦執行，影片和字幕不會送到雲端翻譯服務；取得軟體、工具和模型仍需要網路。進階設定若把伺服器指向區網另一台電腦，字幕或聽寫用音訊就會送到那台電腦處理，因此本機處理的前提也會改變。"
+        },
+        {
+          "q": "影片看得到字幕，為什麼還要語音辨識模型？",
+          "a": "看得到的字可能是 PGS 等圖形字幕，或已燒錄在影像中。看懂不做 OCR；沒有可用文字軌時，改從聲音聽寫再翻譯。先看MKV 字幕類型的分辨方式。"
+        },
+        {
+          "q": "出現「翻譯伺服器連線失敗」怎麼辦？",
+          "a": "先確認是用「看懂」啟動器開啟，而非直接開播放器執行檔。啟動器會先準備翻譯引擎；若仍失敗，再查模型檔、啟動畫面與 logs 記錄。這個訊息本身不足以判定是哪一種連線問題。"
+        },
+        {
+          "q": "語音辨識跟不上，字幕一直空白怎麼辦？",
+          "a": "先按 S 回到正常播放速度，確認 Whisper 語音辨識模型已備妥，再讓聽寫繼續。播放超過處理進度或跳轉到未處理段落時可能空白；完整步驟見沒字幕影片聽寫教學。"
+        },
+        {
+          "q": "翻好的字幕在哪裡？是雙語 SRT 嗎？",
+          "a": "繁中快取在影片旁的 <影片名>.ft.zh-TW.json，完整翻譯後才輸出 .ft.zh-TW.srt；完整聽寫另可存成 .ft.asr.srt。繁中 SRT 是譯文字幕，雙語顯示是在播放器裡把原文與譯文一起呈現，不能把輸出的譯文 SRT 稱作雙語 SRT。"
+        }
+      ],
+      "images": [],
+      "sizes": [
+        {
+          "width": 320,
+          "viewport": 320,
+          "scrollWidth": 320,
+          "elements": []
+        },
+        {
+          "width": 390,
+          "viewport": 390,
+          "scrollWidth": 390,
+          "elements": []
+        },
+        {
+          "width": 768,
+          "viewport": 768,
+          "scrollWidth": 768,
+          "elements": []
+        },
+        {
+          "width": 1440,
+          "viewport": 1440,
+          "scrollWidth": 1440,
+          "elements": []
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "links": [
+    {
+      "url": "/llms.txt",
+      "status": 200
+    },
+    {
+      "url": "/robots.txt",
+      "status": 200
+    },
+    {
+      "url": "/sitemap.xml",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/img/og.png",
+      "status": 200
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@900&family=JetBrains+Mono:wght@500&display=swap",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/#",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/guide/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/#faq",
+      "status": 200,
+      "anchor": "#faq",
+      "anchorFound": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/#download",
+      "status": 200,
+      "anchor": "#download",
+      "anchorFound": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-windows-x64.zip",
+      "external": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-mac.zip",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/img/watching.jpg",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/img/controls.jpg",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/img/menu-subtitles.jpg",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/img/tracks.jpg",
+      "status": 200
+    },
+    {
+      "url": "https://twtools.cc/",
+      "external": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/blob/main/THIRD_PARTY.md",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/guide/#windows",
+      "status": 200,
+      "anchor": "#windows",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/guide/#mac",
+      "status": 200,
+      "anchor": "#mac",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/guide/#trouble",
+      "status": 200,
+      "anchor": "#trouble",
+      "anchorFound": true
+    },
+    {
+      "url": "https://huggingface.co/tencent/Hy-MT2-7B-GGUF/resolve/main/Hy-MT2-7B-Q4_K_M.gguf",
+      "external": true
+    },
+    {
+      "url": "https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF/resolve/main/Hy-MT2-1.8B-Q4_K_M.gguf",
+      "external": true
+    },
+    {
+      "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin",
+      "external": true
+    },
+    {
+      "url": "https://brew.sh/",
+      "external": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/issues",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/reading.css",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/#main",
+      "status": 200,
+      "anchor": "#main",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/no-chinese-subtitles/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/",
+      "status": 200
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#models",
+      "status": 200,
+      "anchor": "#models",
+      "anchorFound": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/releases/latest",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/no-chinese-subtitles/#main",
+      "status": 200,
+      "anchor": "#main",
+      "anchorFound": true
+    },
+    {
+      "url": "https://help.netflix.com/zh-tw/node/372",
+      "external": true
+    },
+    {
+      "url": "https://www.tipo.gov.tw/tw/copyright/692-16773.html",
+      "external": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/blob/7effeb9e3da2fde611f6f068cf71198e98e6a9ff/README.md",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/mkv-bilingual-subtitles/#main",
+      "status": 200,
+      "anchor": "#main",
+      "anchorFound": true
+    },
+    {
+      "url": "https://mpv.io/manual/stable/#subtitles",
+      "external": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/blob/7effeb9e3da2fde611f6f068cf71198e98e6a9ff/scripts/floattranslate.lua",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/#main",
+      "status": 200,
+      "anchor": "#main",
+      "anchorFound": true
+    },
+    {
+      "url": "https://github.com/ggml-org/whisper.cpp",
+      "external": true
+    },
+    {
+      "url": "https://github.com/openai/whisper/blob/main/model-card.md",
+      "external": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#main",
+      "status": 200,
+      "anchor": "#main",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#hy-mt2",
+      "status": 200,
+      "anchor": "#hy-mt2",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#switch",
+      "status": 200,
+      "anchor": "#switch",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#names",
+      "status": 200,
+      "anchor": "#names",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#platforms",
+      "status": 200,
+      "anchor": "#platforms",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#privacy",
+      "status": 200,
+      "anchor": "#privacy",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#bitmap",
+      "status": 200,
+      "anchor": "#bitmap",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#connection",
+      "status": 200,
+      "anchor": "#connection",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#speed",
+      "status": 200,
+      "anchor": "#speed",
+      "anchorFound": true
+    },
+    {
+      "url": "https://kandong.twtools.cc/faq/#cache",
+      "status": 200,
+      "anchor": "#cache",
+      "anchorFound": true
+    },
+    {
+      "url": "https://huggingface.co/tencent/Hy-MT2-7B-GGUF",
+      "external": true
+    },
+    {
+      "url": "https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF",
+      "external": true
+    },
+    {
+      "url": "https://github.com/dvdmaru/kandong/blob/7effeb9e3da2fde611f6f068cf71198e98e6a9ff/mac/kandong.sh",
+      "external": true
+    }
+  ],
+  "numbers": [
+    {
+      "route": "/",
+      "passages": [
+        {
+          "tag": "SPAN",
+          "text": "Windows 10／11・約 146MB・內附翻譯引擎",
+          "tokens": [
+            "10／11",
+            "146MB"
+          ]
+        },
+        {
+          "tag": "SPAN",
+          "text": "Apple 晶片・約 8MB・需要 Homebrew",
+          "tokens": [
+            "8MB"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "1",
+          "tokens": [
+            "1"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "2",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "3",
+          "tokens": [
+            "3"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "右鍵選單、控制列、字幕軌與音軌一點就換；0.5x 到 3x 倍速不變調。",
+          "tokens": [
+            "0.5x",
+            "3x"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。",
+          "tokens": [
+            "2",
+            "2.0"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。",
+          "tokens": [
+            "16GB",
+            "8GB",
+            "4／16GB",
+            "12",
+            "7B",
+            "1–1.5"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/guide/",
+      "passages": [
+        {
+          "tag": "H2",
+          "text": "Windows 10／11",
+          "tokens": [
+            "10／11"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "1",
+          "tokens": [
+            "1"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "2",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "===== 看懂：一鍵下載模型 ===== 這台電腦記憶體約 16 GB，建議選 1（標準）。 [1] 翻譯模型・標準（約 4.6GB） [2] 翻譯模型・輕量（約 1.1GB） [3] 語音辨識模型（約 574MB） 輸入要下載的編號：",
+          "tokens": [
+            "16",
+            "1",
+            "1",
+            "4.6GB",
+            "2",
+            "1.1GB",
+            "3",
+            "574MB"
+          ]
+        },
+        {
+          "tag": "SPAN",
+          "text": "13",
+          "tokens": [
+            "13"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "示意圖：輸入 13 ＝標準翻譯模型＋語音辨識模型一起下載",
+          "tokens": [
+            "13"
+          ]
+        },
+        {
+          "tag": "TD",
+          "text": "4.6GB",
+          "tokens": [
+            "4.6GB"
+          ]
+        },
+        {
+          "tag": "TD",
+          "text": "記憶體 16GB 以上",
+          "tokens": [
+            "16GB"
+          ]
+        },
+        {
+          "tag": "TD",
+          "text": "1.1GB",
+          "tokens": [
+            "1.1GB"
+          ]
+        },
+        {
+          "tag": "TD",
+          "text": "記憶體 8GB、電腦較舊",
+          "tokens": [
+            "8GB"
+          ]
+        },
+        {
+          "tag": "TD",
+          "text": "574MB",
+          "tokens": [
+            "574MB"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "完整檔名與 SHA256 校驗碼在 models 資料夾的「把模型放這裡.txt」。",
+          "tokens": [
+            "256"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "3",
+          "tokens": [
+            "3"
+          ]
+        },
+        {
+          "tag": "DIV",
+          "text": "看懂 KanDong 啟動中… 開啟翻譯引擎（模型：Hy-MT2-7B-Q4_K_M.gguf） ..........",
+          "tokens": [
+            "2-7B",
+            "4"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "0. 先裝工具（一次）",
+          "tokens": [
+            "0"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "1. 解壓、拿模型",
+          "tokens": [
+            "1"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "2. 雙擊「看懂.command」",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "翻譯引擎需要微軟的這個元件。照畫面開的微軟官方頁面，下載 X64 版（vc_redist.x64.exe）安裝，再雙擊「看懂」。",
+          "tokens": [
+            "64",
+            "64"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "先查記憶體與模型檔是否完整；可改用輕量模型（一鍵下載選 2）。兩個翻譯模型都放的話，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。",
+          "tokens": [
+            "2",
+            "12GB"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "需要語音辨識模型（一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。",
+          "tokens": [
+            "3",
+            "1x"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/articles/",
+      "passages": [
+        {
+          "tag": "TIME",
+          "text": "2026-10-24",
+          "tokens": [
+            "2026-10-24"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "無字幕影片需要先語音辨識，再翻譯成繁中。看懂的本機流程、Whisper 與 Hy-MT2 分工、模型準備、字幕延遲與辨識錯誤排查。",
+          "tokens": [
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/articles/no-chinese-subtitles/",
+      "passages": [
+        {
+          "tag": "TIME",
+          "text": "2026-10-24",
+          "tokens": [
+            "2026-10-24"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "先用語音辨識（ASR）聽寫原文，再把原文翻成繁中。看懂使用 whisper.cpp 做聽寫，Hy-MT2 做翻譯。",
+          "tokens": [
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/articles/mkv-bilingual-subtitles/",
+      "passages": [
+        {
+          "tag": "TIME",
+          "text": "2026-10-24",
+          "tokens": [
+            "2026-10-24"
+          ]
+        },
+        {
+          "tag": "LI",
+          "text": "Hy-MT2 常把人名音譯，例如 Marcus 變成「馬庫斯」，換大模型仍可能發生。",
+          "tokens": [
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/articles/auto-chinese-subtitles/",
+      "passages": [
+        {
+          "tag": "P",
+          "text": "沒字幕的本機影片，要先用語音辨識把對白轉成原文，再翻成中文字幕。看懂用 whisper.cpp 聽寫、Hy-MT2 翻譯；除了翻譯模型，還要準備 Whisper large-v3-turbo 語音辨識模型。",
+          "tokens": [
+            "2",
+            "3"
+          ]
+        },
+        {
+          "tag": "TIME",
+          "text": "2026-10-24",
+          "tokens": [
+            "2026-10-24"
+          ]
+        },
+        {
+          "tag": "H2",
+          "text": "Whisper 負責聽，Hy-MT2 負責翻",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "看懂先把音訊交給 whisper.cpp，產生原文與時間軸，再把原文交給 Hy-MT2，顯示原文與繁中譯文。原文聽錯，譯文也可能跟著錯，所以遇到怪句時，先對照原文那一行。",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "是 Whisper 的本機執行實作。這個分工也表示：只有 Hy-MT2 模型，不能直接把一段聲音翻成中文字幕。",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "README 建議記憶體 8GB 或較舊的電腦用 Hy-MT2 1.8B，16GB 以上用 7B。模型檔約為 1.1GB 與 4.6GB；檔案大小不等於執行時只需要同樣多的記憶體。",
+          "tokens": [
+            "8GB",
+            "2",
+            "1.8B",
+            "16GB",
+            "7B",
+            "1.1GB",
+            "4.6GB"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "Whisper large-v3-turbo 約 574MB。原本已有可用文字字幕的影片不需要這一步；無字幕或只有圖形字幕時才需要。",
+          "tokens": [
+            "3",
+            "574MB"
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/faq/",
+      "passages": [
+        {
+          "tag": "TIME",
+          "text": "2026-10-24",
+          "tokens": [
+            "2026-10-24"
+          ]
+        },
+        {
+          "tag": "A",
+          "text": "8GB／16GB 記憶體，各選哪個模型？",
+          "tokens": [
+            "8GB",
+            "16GB"
+          ]
+        },
+        {
+          "tag": "A",
+          "text": "Hy-MT2 是什麼？能直接聽影片嗎？",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "H2",
+          "text": "8GB／16GB 記憶體，各選哪個模型？",
+          "tokens": [
+            "8GB",
+            "16GB"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "依 README 建議：8GB 或較舊的電腦選 Hy-MT2 1.8B 輕量模型，16GB 以上選 7B 標準模型。模型檔分別約 1.1GB、4.6GB；這是檔案大小，不是整套程式的記憶體用量。",
+          "tokens": [
+            "8GB",
+            "2",
+            "1.8B",
+            "16GB",
+            "7B",
+            "1.1GB",
+            "4.6GB"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "README 的實測條件是 Apple M4／16GB、含 12 句前文：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒。這些結果不能推算成其他硬體或整部影片的處理時間。",
+          "tokens": [
+            "4／16GB",
+            "12",
+            "7B",
+            "1–1.5",
+            "1.8B",
+            "0.25"
+          ]
+        },
+        {
+          "tag": "H2",
+          "text": "Hy-MT2 是什麼？能直接聽影片嗎？",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "Hy-MT2 是騰訊（Tencent）公開的多語翻譯模型。看懂用它把原文字幕翻成台灣繁中；聽音訊轉文字則由 whisper.cpp 負責。沒字幕的影片需要兩種模型，不能只準備翻譯模型。",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "不保證。Hy-MT2 常把人名音譯，例如 Marcus 變成「馬庫斯」；換大模型也可能發生。譯名修正仍是之後的計畫，不能當作已完成功能。",
+          "tokens": [
+            "2"
+          ]
+        },
+        {
+          "tag": "P",
+          "text": "下載包提供 Windows 10／11（64 位元）與 macOS Apple 晶片版；Mac 需要先裝 Homebrew 工具。看懂只處理本機影片檔，不支援 Netflix 等串流平台，不攔截串流，也不破解 DRM。",
+          "tokens": [
+            "10／11",
+            "64"
+          ]
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

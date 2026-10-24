@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@900&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-html,body{margin:0;background:#fff8f2;overflow-x:hidden}
+*{box-sizing:border-box}html,body{margin:0;background:#fff8f2}
 a{color:#7c4241}a:hover{color:#5c2f2e}
 summary::-webkit-details-marker{color:#7c4241}
 </style>
@@ -45,6 +45,12 @@ document.addEventListener('click', function (e) {
 "url":"https://kandong.twtools.cc/","downloadUrl":"https://github.com/dvdmaru/kandong/releases/latest",
 "codeRepository":"https://github.com/dvdmaru/kandong","screenshot":"https://kandong.twtools.cc/img/watching.jpg"}
 </script>
+
+
+
+<!-- editorial-faq:start -->
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "要錢嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。"}}, {"@type": "Question", "name": "影片或字幕會被上傳嗎？", "acceptedAnswer": {"@type": "Answer", "text": "預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。"}}, {"@type": "Question", "name": "這是看片網站嗎？能看 Netflix 嗎？", "acceptedAnswer": {"@type": "Answer", "text": "都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。"}}, {"@type": "Question", "name": "我的電腦跑得動嗎？", "acceptedAnswer": {"@type": "Answer", "text": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。"}}, {"@type": "Question", "name": "翻得準嗎？", "acceptedAnswer": {"@type": "Answer", "text": "人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。"}}]}</script>
+<!-- editorial-faq:end -->
 </head>
 <body>
 <div style="font-family: 'Noto Sans TC', sans-serif; color: #201914; background: #fff8f2; line-height: 1.75">
@@ -57,6 +63,8 @@ document.addEventListener('click', function (e) {
         <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #786866; letter-spacing: 0.08em">KanDong</span>
       </a>
       <nav style="display: flex; gap: 20px; font-size: 15px; flex-wrap: wrap; align-items: center">
+        <a href="/articles/" style="color: #5a4845; text-decoration: none">字幕指南</a>
+        <a href="/faq/" style="color: #5a4845; text-decoration: none">完整 FAQ</a>
         <a href="/guide/" style="color: #5a4845; text-decoration: none">圖文教學</a>
         <a href="#faq" style="color: #5a4845; text-decoration: none">常見問題</a>
         <a href="https://github.com/dvdmaru/kandong" style="color: #5a4845; text-decoration: none">GitHub</a>
@@ -145,7 +153,7 @@ document.addEventListener('click', function (e) {
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px">
       <div style="border-top: 4px solid #7c4241; padding-top: 16px">
         <h3 style="font-size: 20px; margin: 0 0 6px; font-weight: 900">雙語字幕</h3>
-        <p style="margin: 0; color: #5a4845; font-size: 15px">外掛 .srt／.ass／.vtt 或 mkv 內嵌字幕都行，整部片先翻好，看的時候不用等。</p>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">外掛 .srt／.ass／.vtt 或 mkv 內嵌字幕都行，能讀取全文時會超前預譯，已翻好的句子會快取。</p>
       </div>
       <div style="border-top: 4px solid #f5b83d; padding-top: 16px">
         <h3 style="font-size: 20px; margin: 0 0 6px; font-weight: 900">沒字幕也能看</h3>
@@ -165,7 +173,7 @@ document.addEventListener('click', function (e) {
   <section style="max-width: 1120px; margin: 0 auto; padding: 48px 20px">
     <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #786866; margin: 0 0 8px">畫面</p>
     <h2 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(30px, 6vw, 40px); margin: 0 0 28px">看起來是這樣</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px">
       <figure style="margin: 0">
         <img src="img/controls.jpg" alt="滑鼠移到下方時出現的控制列" style="display: block; width: 100%; height: auto; border: 2px solid #201914; border-radius: 12px">
         <figcaption style="font-size: 14px; color: #5a4845; margin-top: 8px">滑鼠移到下方：控制列與時間軸</figcaption>
@@ -190,7 +198,7 @@ document.addEventListener('click', function (e) {
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">影片或字幕會被上傳嗎？</summary>
-      <p style="margin: 10px 0 0; color: #5a4845">不會。翻譯和語音辨識都在你自己的電腦上跑，播放器不連任何雲端服務。只有第一次下載模型時會連到 Hugging Face。</p>
+      <p style="margin: 10px 0 0; color: #5a4845">預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。</p>
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">這是看片網站嗎？能看 Netflix 嗎？</summary>
@@ -198,11 +206,11 @@ document.addEventListener('click', function (e) {
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">我的電腦跑得動嗎？</summary>
-      <p style="margin: 10px 0 0; color: #5a4845">記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。實測 Apple M4／16GB 每句約 1–1.5 秒，有字幕的片會先翻好整部。</p>
+      <p style="margin: 10px 0 0; color: #5a4845">記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。</p>
     </details>
     <details style="border-top: 2px solid #201914; border-bottom: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">翻得準嗎？</summary>
-      <p style="margin: 10px 0 0; color: #5a4845">一般對話、口語大多自然；人名常被音譯（例如 Marcus 變成「馬庫斯」），之後會改進。機器翻譯難免出錯，重要內容請以原文為準。</p>
+      <p style="margin: 10px 0 0; color: #5a4845">人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。</p>
     </details>
   </section>
 
