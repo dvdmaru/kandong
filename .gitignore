@@ -1,0 +1,6 @@
+dist/
+ui/vendor/
+.DS_Store
+*.ft.*.json
+*.ft.*.srt
+*.ft.asr.*

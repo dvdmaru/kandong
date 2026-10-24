@@ -1,0 +1,11 @@
+// 看懂官網：Cloudflare Workers 靜態資產（無程式），綁 kandong.twtools.cc
+// 部署：cd site && npx wrangler deploy（需要有 twtools.cc zone 權限、Workers Scripts:Edit 的 token）
+{
+  "name": "kandong-site",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./public" },
+  "routes": [
+    { "pattern": "kandong.twtools.cc", "custom_domain": true }
+  ],
+  "workers_dev": false
+}
