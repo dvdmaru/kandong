@@ -8,7 +8,7 @@
 #   KANDONG_PORT=8081 bash server/start-translate-server.sh
 #
 # 需要：llama-server（macOS：brew install llama.cpp；其他平台見 llama.cpp 官方 releases）
-# 模型第一次啟動自動下載到 ~/.cache/kandong/models/，之後離線可用。
+# 模型放在 KanDong/models/（跟「一鍵下載模型」同一個資料夾）；沒有就第一次啟動時自動下載，之後離線可用。
 #   7b  （預設）品質較好，每句約 1–1.5 秒（Apple M4／16GB 實測），檔約 4.6GB，需 8GB 以上可用記憶體
 #   1.8b         每句約 0.25 秒，檔約 1.1GB；記憶體吃緊、或要開 2 倍速以上看無字幕片時用
 #
@@ -19,7 +19,7 @@
 set -euo pipefail
 
 MODEL_SIZE="${KANDONG_MODEL:-7b}"
-MODEL_DIR="${KANDONG_MODEL_DIR:-${HOME}/.cache/kandong/models}"
+MODEL_DIR="${KANDONG_MODEL_DIR:-$(cd "$(dirname "$0")/.." && pwd)/models}"
 case "${MODEL_SIZE}" in
   7b|7B)
     MODEL_PATH="${MODEL_DIR}/Hy-MT2-7B-Q4_K_M.gguf"

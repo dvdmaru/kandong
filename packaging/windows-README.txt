@@ -1,34 +1,26 @@
-看懂 KanDong — Windows 預覽版
-==============================
+看懂 KanDong — Windows 版
+=========================
 
-看懂是一個會「邊播邊翻譯字幕」的影片播放器：英文、日文等外語片，自動在原文字幕下方加上台灣繁中譯文；
-沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。翻譯全部在你自己的電腦上跑，影片和字幕不會上傳到任何地方。
+影片沒中文字幕？一看就懂。
+看懂會在原文字幕下方自動加上台灣繁中譯文；沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。
+播你自己的影片檔，不提供影片、不下載字幕。翻譯在你自己的電腦上跑，影片和字幕不會上傳到任何地方。
 
-【預覽版的門檻：要先開一個翻譯伺服器】
-播放器本身只負責播放和顯示；翻譯要靠一個「翻譯伺服器」（免費的 llama.cpp 加上騰訊的 Hy-MT2 翻譯模型）。
-之後的正式版會把伺服器內建進播放器、下載就能用；預覽版請先照下面做一次。
+【三步開始】
+1. 把整個 KanDong 資料夾解壓到任何地方（桌面、D 槽都可以）。
+2. 拿翻譯模型（只要做一次），兩種方法擇一：
+   A. 雙擊「一鍵下載模型」，照畫面選編號（會自動下載並檢查檔案）
+   B. 自己下載：打開 models 資料夾裡的「把模型放這裡.txt」，照裡面的連結下載，檔案放進 models 資料夾
+3. 雙擊「看懂」，等翻譯引擎就緒後會開出播放器，把影片拖進去就開始播。
+   （也可以直接把影片拖到「看懂」上。）
 
-1. 下載 llama.cpp：https://github.com/ggml-org/llama.cpp/releases
-   選檔名有 win 與 x64 的 zip（有 NVIDIA 顯示卡選 cuda 版；沒有就選 vulkan 或 cpu 版），解壓到任何資料夾。
-2. 在那個資料夾的網址列打 cmd 按 Enter，開出命令提示字元，貼上這一行（第一次會下載約 4.6GB 的模型）：
-     llama-server.exe -hf tencent/Hy-MT2-7B-GGUF -hff Hy-MT2-7B-Q4_K_M.gguf --port 8080 --ctx-size 4096 --parallel 1 -ngl 99
-   電腦記憶體 16GB 以下或沒有獨立顯示卡，改用小模型（約 1.1GB，快很多、品質稍差）：
-     llama-server.exe -hf tencent/Hy-MT2-1.8B-GGUF -hff Hy-MT2-1.8B-Q4_K_M.gguf --port 8080 --ctx-size 4096 --parallel 1 -ngl 99
-   看到 "server is listening" 就好了。這個視窗看片時要保持開著。
-3. （只有看「沒字幕的片」才需要）語音辨識伺服器：
-   https://github.com/ggml-org/whisper.cpp/releases 下載 whisper-bin-x64.zip 解壓；
-   模型到 https://huggingface.co/ggerganov/whisper.cpp/tree/main 下載 ggml-large-v3-turbo-q5_0.bin 放在同一個資料夾；
-   在該資料夾開命令提示字元：
-     whisper-server.exe -m ggml-large-v3-turbo-q5_0.bin --port 8090
+【第一次雙擊可能看到的畫面】
+- 「Windows 已保護您的電腦」：按「其他資訊」→「仍要執行」。看懂是開源軟體但沒有花錢買數位簽章，所以 Windows 不認得它。
+- 說缺少「Visual C++ 可轉散發套件」：照畫面開的微軟官方頁面，下載 X64 版安裝後再雙擊「看懂」。
 
-翻譯伺服器在區網另一台電腦（例如 Mac）？改 portable_config\script-opts\floattranslate.conf 的 endpoint
-（和 asr_endpoint）成那台電腦的區網 IP，伺服器有開 API key 就填 api_key=。
-
-【使用】
-- 把整個 KanDong 資料夾解壓到任何地方（桌面、D 槽都可以），把影片拖到 mpv.exe 上即可播放。
-- 有字幕（外掛 .srt／.ass／.vtt，或 mkv 內嵌）：自動雙語顯示，而且會先把整部片的字幕翻好。
-- 沒字幕：自動語音辨識，約 20–30 秒後出現雙語字幕。
-- 翻好的譯文會存在影片旁邊（<影片名>.ft.zh-TW.json／.srt），重看不必再翻。
+【電腦需求】
+- 64 位元 Windows 10／11。
+- 記憶體 16GB 用標準模型；8GB 用輕量模型（一鍵下載時選 2）。有獨立顯示卡會快很多。
+- 翻譯引擎、語音辨識引擎都已經內附在 engine 資料夾，不必另外安裝。
 
 【操作】
   滑鼠右鍵    選單（播放、字幕、音訊、翻譯、倍速、設定）
@@ -43,13 +35,18 @@
   空白鍵 暫停；f 全螢幕；q 離開
 
 【常見問題】
-- 左上角出現「翻譯伺服器連線失敗」：翻譯伺服器沒開、port 不是 8080，或 endpoint 填錯。
-  伺服器開好後不用重開影片，30 秒內會自動重試。
-- 沒字幕的片開 2 倍速以上，左上出現「語音辨識跟不上」：按 S 回 1x 即可。
+- 左上角出現「翻譯伺服器連線失敗」：用「看懂」啟動（不要直接開 mpv.exe），它會先把翻譯引擎開好。
+- 翻譯引擎啟動失敗：多半是記憶體不夠，改用輕量模型（一鍵下載選 2）；詳細記錄在 logs 資料夾。
+- 沒字幕的片：需要先下載語音辨識模型（一鍵下載選 3）。開 2 倍速以上若出現「語音辨識跟不上」，按 S 回 1x。
+- 翻好的譯文存在影片旁邊（<影片名>.ft.zh-TW.json／.srt），重看不必再翻。
+
+【進階：翻譯引擎放在區網另一台電腦】
+改 portable_config\script-opts\floattranslate.conf 的 endpoint、asr_endpoint 成那台電腦的區網 IP，
+有開 API key 就填 api_key=。這時「看懂」就不會在本機開引擎。
 
 【這個播放器刻意不做的事】
-不下載字幕、不攔截串流、不破解 DRM（Netflix 等串流平台不支援）。
+不提供影片、不下載字幕、不攔截串流、不破解 DRM（Netflix 等串流平台不支援）。
 
-官網：https://kandong.twtools.cc
+官網與圖文教學：https://kandong.twtools.cc
 原始碼與問題回報：https://github.com/dvdmaru/kandong
-授權：看懂本身是 MIT；內附的 mpv、FFmpeg、uosc、Vulkan Runtime 各有授權，見 licenses 資料夾。
+授權：看懂本身是 MIT；內附的 mpv、FFmpeg、llama.cpp、whisper.cpp、uosc、Vulkan Runtime 各有授權，見 licenses 資料夾。

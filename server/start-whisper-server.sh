@@ -7,7 +7,7 @@
 #   KANDONG_WHISPER_MODEL=base.en bash server/start-whisper-server.sh
 #
 # 需要：whisper-server（macOS：brew install whisper-cpp；其他平台見 whisper.cpp 官方 releases）
-# 模型第一次自動下載到 ~/.cache/kandong/whisper/：
+# 模型放在 KanDong/models/（跟「一鍵下載模型」同一個資料夾），沒有就第一次自動下載：
 #   large-v3-turbo-q5_0  預設，約 574MB，多語言，速度／品質的甜蜜點
 #   small                約 488MB，較快、品質略降
 #   base.en              約 148MB，只認英文
@@ -18,7 +18,7 @@
 set -euo pipefail
 
 MODEL_NAME="${KANDONG_WHISPER_MODEL:-large-v3-turbo-q5_0}"
-MODEL_DIR="${KANDONG_WHISPER_DIR:-${HOME}/.cache/kandong/whisper}"
+MODEL_DIR="${KANDONG_WHISPER_DIR:-$(cd "$(dirname "$0")/.." && pwd)/models}"
 MODEL_FILE="${MODEL_DIR}/ggml-${MODEL_NAME}.bin"
 PORT="${KANDONG_WHISPER_PORT:-8090}"
 HOST="127.0.0.1"

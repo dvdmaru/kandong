@@ -9,9 +9,10 @@
 | FFmpeg | 抽內嵌字幕軌、切語音辨識用的音訊（Windows 包內附） | N-125907-ga7e72069f1-20260802（BtbN/FFmpeg-Builds win64-gpl） | GPL-3.0-or-later（`--enable-gpl --enable-version3`） | https://github.com/FFmpeg/FFmpeg ，build 腳本 https://github.com/BtbN/FFmpeg-Builds |
 | Vulkan Runtime（vulkan-1.dll） | 上面這個 mpv build 需要（Windows 包內附） | LunarG Vulkan Runtime x64 | MIT／Apache-2.0 等開源授權（見 VulkanRT-License.txt） | https://vulkan.lunarg.com/ |
 | uosc | 控制列、右鍵選單等介面（兩個包都內附） | 5.13.0 | LGPL-2.1 | https://github.com/tomasklaen/uosc |
-| Hy-MT2 翻譯模型 | 翻譯（不內附；伺服器腳本第一次執行時從 Hugging Face 下載） | Hy-MT2-7B／1.8B GGUF Q4_K_M | Apache-2.0 | https://huggingface.co/tencent/Hy-MT2-7B-GGUF |
-| llama.cpp | 翻譯伺服器（不內附；使用者自行安裝） | — | MIT | https://github.com/ggml-org/llama.cpp |
-| whisper.cpp | 語音辨識伺服器（不內附；使用者自行安裝） | — | MIT | https://github.com/ggml-org/whisper.cpp |
+| Hy-MT2 翻譯模型 | 翻譯（不內附；一鍵下載或手動下載） | Hy-MT2-7B／1.8B GGUF Q4_K_M | Apache-2.0 | https://huggingface.co/tencent/Hy-MT2-7B-GGUF |
+| llama.cpp（llama-server） | 翻譯引擎（Windows 包內附；Mac 用 Homebrew 安裝） | b10204（win-vulkan-x64） | MIT | https://github.com/ggml-org/llama.cpp |
+| whisper.cpp（whisper-server） | 語音辨識引擎（Windows 包內附；Mac 用 Homebrew 安裝） | b5454（whisper-bin-x64） | MIT | https://github.com/ggml-org/whisper.cpp |
+| Whisper large-v3-turbo 模型 | 語音辨識（不內附；一鍵下載或手動下載） | ggml q5_0 | MIT | https://huggingface.co/ggerganov/whisper.cpp |
 
 ## 對 uosc 的修改
 

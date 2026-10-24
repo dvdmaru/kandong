@@ -1,14 +1,11 @@
 # 看懂 KanDong
 
-**邊播邊翻譯字幕的影片播放器。** 外語片自動在原文字幕下方加上台灣繁中譯文；沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。
-翻譯用的是在你自己電腦上跑的開源模型，影片和字幕不會上傳到任何地方。
+**影片沒中文字幕？一看就懂。** 看懂是免費開源的影片播放器：外語片自動在原文字幕下方加上台灣繁中譯文；沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。
+播你自己的影片檔，不提供影片、不下載字幕；翻譯在你自己的電腦上跑，影片和字幕不會上傳到任何地方。
 
-官網：<https://kandong.twtools.cc>　｜　下載：[最新版](https://github.com/dvdmaru/kandong/releases/latest)
+官網與圖文教學：<https://kandong.twtools.cc>　｜　下載：[最新版](https://github.com/dvdmaru/kandong/releases/latest)
 
 ![看懂播放畫面：上英文、下繁中](docs/screenshot-watching.png)
-
-> **目前是預覽版。** 播放器還需要搭配一個自己開的「翻譯伺服器」（免費的 llama.cpp＋騰訊 Hy-MT2 翻譯模型）。
-> 之後的正式版會把伺服器內建進播放器，下載就能用。
 
 ## 能做什麼
 
@@ -18,39 +15,40 @@
 - **台灣用語**：翻譯提示詞針對台灣繁中調過（口語、俚語意譯、運動術語），不是逐字直翻。
 - **好操作**：右鍵選單、控制列、倍速（0.5x–3x，變速不變調）、字幕軌與音軌用滑鼠選。
 
-## 下載與安裝
+## 三步開始
 
 到 [Releases](https://github.com/dvdmaru/kandong/releases/latest) 下載：
 
 | 檔案 | 平台 | 說明 |
 |---|---|---|
-| `KanDong-windows-x64.zip` | Windows 10／11（64 位元） | 解壓即用，內附 mpv 與 FFmpeg |
-| `KanDong-mac.zip` | macOS（Apple 晶片） | 需要 Homebrew：`brew install mpv ffmpeg llama.cpp whisper-cpp` |
+| `KanDong-windows-x64.zip` | Windows 10／11（64 位元） | 解壓即用，內附播放器、翻譯引擎、語音辨識引擎 |
+| `KanDong-mac.zip` | macOS（Apple 晶片） | 先裝 Homebrew，再跑一次 `brew install mpv ffmpeg llama.cpp whisper-cpp` |
 
-包裡的「使用說明.txt」有完整步驟，包含怎麼開翻譯伺服器。
+1. **解壓**到任何地方。
+2. **拿翻譯模型**（只要一次）：雙擊「一鍵下載模型」，或照 `models/把模型放這裡.txt` 的連結自己下載後放進 `models` 資料夾。
+3. **雙擊「看懂」**（Mac 是「看懂.command」）：自動開翻譯引擎，再開播放器，把影片拖進去就開始播。
 
-## 翻譯伺服器
+| 模型 | 大小 | 什麼時候選 |
+|---|---|---|
+| Hy-MT2 7B（標準） | 約 4.6GB | 記憶體 16GB 以上，翻得比較好 |
+| Hy-MT2 1.8B（輕量） | 約 1.1GB | 記憶體 8GB 或電腦較舊，快很多 |
+| Whisper large-v3-turbo（語音辨識） | 約 574MB | 只有看沒字幕的影片才需要 |
 
-播放器把字幕送到一個 OpenAI 相容的 `/v1/chat/completions` 端點翻譯，預設是同一台電腦的 `http://127.0.0.1:8080`。
+實測速度（Apple M4／16GB，含 12 句前文）：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒；有字幕的片會先翻好整部，看的時候幾乎不用等。
 
-**Mac／Linux：**
+## 進階：自己開翻譯伺服器
+
+播放器把字幕送到一個 OpenAI 相容的 `/v1/chat/completions` 端點翻譯，預設是同一台電腦的 `http://127.0.0.1:8080`；
+「看懂」啟動器只在這個設定指向本機時才自動開引擎。
 
 ```bash
-bash server/start-translate-server.sh                 # 翻譯（第一次自動下載約 4.6GB 的 Hy-MT2 7B）
-KANDONG_MODEL=1.8b bash server/start-translate-server.sh   # 記憶體吃緊時用小模型（約 1.1GB）
-bash server/start-whisper-server.sh                   # 只有看沒字幕的片才需要
-```
-
-**Windows：** 從 [llama.cpp releases](https://github.com/ggml-org/llama.cpp/releases) 下載 Windows 版，在資料夾裡執行：
-
-```
-llama-server.exe -hf tencent/Hy-MT2-7B-GGUF -hff Hy-MT2-7B-Q4_K_M.gguf --port 8080 --ctx-size 4096 --parallel 1 -ngl 99
+bash server/start-translate-server.sh                      # 翻譯（模型放 models/，沒有就自動下載 7B）
+KANDONG_MODEL=1.8b bash server/start-translate-server.sh   # 輕量模型
+bash server/start-whisper-server.sh                        # 只有看沒字幕的片才需要
 ```
 
 **伺服器放在區網另一台電腦**（例如用 Mac 跑模型、Windows 看片）：伺服器那台用 `KANDONG_LAN=1` 啟動（會強制 API key，key 存在 `~/.config/kandong/api-key`），
 播放器的 `floattranslate.conf` 改 `endpoint`、`asr_endpoint` 並填 `api_key`。只開在信任的區網，不要轉發到公網。
-
-實測速度（Apple M4／16GB，含 12 句前文）：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒；有字幕的片會先翻好整部，看的時候幾乎不用等。
 
 ## 操作
 
@@ -74,15 +72,15 @@ llama-server.exe -hf tencent/Hy-MT2-7B-GGUF -hff Hy-MT2-7B-Q4_K_M.gguf --port 80
 ## 已知限制
 
 - 人名常被音譯（例如 Marcus → 馬庫斯），換大模型也一樣；之後會做譯名修正。
-- 「模型」選單目前只是預告，換模型要在翻譯伺服器那邊換。
+- 「模型」選單目前只是預告；換模型＝把想用的模型放進 models（兩個都放時依記憶體自動挑）。
 - 控制列展開時，字幕不會自動往上讓位（目前把字幕固定放在稍高的位置）。
 
 ## 從原始碼執行（Mac）
 
 ```bash
 brew install mpv ffmpeg llama.cpp whisper-cpp
-bash server/start-translate-server.sh        # 另開一個 Terminal
-bash mac/kandong.sh                          # 開空視窗，把影片拖進去
+bash mac/download-models.sh                  # 下載模型到 models/
+bash mac/kandong.sh                          # 自動開引擎＋開空視窗，把影片拖進去
 ```
 
 設定裝在 `~/.config/kandong/mpv/`，不動你原本的 mpv 設定。程式結構：
@@ -90,7 +88,7 @@ bash mac/kandong.sh                          # 開空視窗，把影片拖進去
 - `scripts/floattranslate.lua`：翻譯、聽寫、快取、雙語顯示（mpv Lua 腳本；`floattranslate` 是內部代號）
 - `ui/`：介面（[uosc](https://github.com/tomasklaen/uosc) 設定、右鍵選單、台灣繁中介面文字）
 - `server/`：翻譯與語音辨識伺服器啟動腳本
-- `packaging/`：產生下載包
+- `packaging/`：產生下載包（含 Windows 啟動器 `packaging/windows/`）
 
 ## 授權
 

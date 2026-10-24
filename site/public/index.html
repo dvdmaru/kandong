@@ -3,174 +3,215 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>看懂 KanDong｜邊播邊翻譯字幕的影片播放器</title>
-<meta name="description" content="看懂是免費開源的影片播放器：外語片自動在原文字幕下方加上台灣繁中譯文，沒字幕的片先語音辨識再翻譯。翻譯在你自己的電腦上跑，影片不上傳。支援 Windows 與 Mac。">
+<title>看懂 KanDong｜影片沒中文字幕？一看就懂</title>
+<meta name="description" content="看懂是免費開源的影片播放器：播你自己的影片檔，自動在原文字幕下方加上台灣繁中譯文，沒字幕的片也能先聽寫再翻譯。翻譯在自己電腦上跑，影片不上傳。Windows／Mac。">
 <link rel="canonical" href="https://kandong.twtools.cc/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="看懂 KanDong">
-<meta property="og:title" content="看懂 KanDong｜邊播邊翻譯字幕的影片播放器">
-<meta property="og:description" content="外語片自動加上台灣繁中字幕，沒字幕的片也能先聽寫再翻譯。免費開源，翻譯在自己電腦上跑。">
+<meta property="og:title" content="看懂 KanDong｜影片沒中文字幕？一看就懂">
+<meta property="og:description" content="看懂是免費開源的影片播放器：播你自己的影片檔，自動在原文字幕下方加上台灣繁中譯文，沒字幕的片也能先聽寫再翻譯。翻譯在自己電腦上跑，影片不上傳。Windows／Mac。">
 <meta property="og:url" content="https://kandong.twtools.cc/">
 <meta property="og:image" content="https://kandong.twtools.cc/img/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%237c4241'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fffbfa' font-family='serif' font-weight='700'%3E懂%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237c4241'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff8f2' font-family='serif' font-weight='900'%3E懂%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=JetBrains+Mono:wght@400&display=swap">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "看懂 KanDong",
-  "alternateName": "KanDong",
-  "description": "邊播邊翻譯字幕的影片播放器：外語片自動加上台灣繁中譯文，沒字幕的片先語音辨識再翻譯。翻譯在使用者自己的電腦上執行。",
-  "applicationCategory": "MultimediaApplication",
-  "operatingSystem": "Windows 10, Windows 11, macOS",
-  "softwareVersion": "0.1.0",
-  "inLanguage": "zh-TW",
-  "isAccessibleForFree": true,
-  "license": "https://opensource.org/licenses/MIT",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TWD" },
-  "url": "https://kandong.twtools.cc/",
-  "downloadUrl": "https://github.com/dvdmaru/kandong/releases/latest",
-  "codeRepository": "https://github.com/dvdmaru/kandong",
-  "screenshot": "https://kandong.twtools.cc/img/watching.jpg"
-}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+html,body{margin:0;background:#fff8f2;overflow-x:hidden}
+a{color:#7c4241}a:hover{color:#5c2f2e}
+summary::-webkit-details-marker{color:#7c4241}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R9KBKJFEH1"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-R9KBKJFEH1');
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[data-dl]');
+  if (a) gtag('event', 'kandong_download', { platform: a.getAttribute('data-dl') });
+});
 </script>
-<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"看懂 KanDong","alternateName":"KanDong",
+"description":"影片沒中文字幕？一看就懂。播你自己的影片檔，自動在原文字幕下方加上台灣繁中譯文；沒字幕的片先語音辨識再翻譯。翻譯在使用者自己的電腦上執行。",
+"applicationCategory":"MultimediaApplication","operatingSystem":"Windows 10, Windows 11, macOS","softwareVersion":"0.2.0",
+"inLanguage":"zh-TW","isAccessibleForFree":true,"license":"https://opensource.org/licenses/MIT",
+"offers":{"@type":"Offer","price":"0","priceCurrency":"TWD"},
+"url":"https://kandong.twtools.cc/","downloadUrl":"https://github.com/dvdmaru/kandong/releases/latest",
+"codeRepository":"https://github.com/dvdmaru/kandong","screenshot":"https://kandong.twtools.cc/img/watching.jpg"}
+</script>
 </head>
 <body>
-<header class="top">
-  <div class="wrap top-row">
-    <a class="logo" href="/"><span class="brand-dot"></span><span class="logo-zh">看懂</span><span class="logo-en">KanDong</span></a>
-    <nav class="top-nav">
-      <a href="#download">下載</a>
-      <a href="#start">怎麼開始</a>
-      <a href="#faq">常見問題</a>
-      <a href="https://github.com/dvdmaru/kandong" rel="noopener">GitHub</a>
-    </nav>
-  </div>
-</header>
+<div style="font-family: 'Noto Sans TC', sans-serif; color: #201914; background: #fff8f2; line-height: 1.75">
 
-<main>
-<section class="hero wrap">
-  <p class="eyebrow">TWTOOLS · 開源影片播放器 · 預覽版 0.1.0</p>
-  <h1>外語片，<br class="br-sm">一看就懂。</h1>
-  <p class="lede">看懂是一個邊播邊翻譯字幕的影片播放器。外語片自動在原文字幕下方加上台灣繁中譯文；沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。</p>
-  <p class="lede-sub">翻譯用的是在你自己電腦上跑的開源模型，影片和字幕不會上傳到任何地方。免費、開源。</p>
-  <div class="cta" id="download">
-    <a class="btn btn-primary" href="https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-windows-x64.zip">
-      <span class="btn-title">下載 Windows 版</span><span class="btn-meta">Windows 10／11 · 約 106MB · 解壓即用</span>
-    </a>
-    <a class="btn" href="https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-mac.zip">
-      <span class="btn-title">下載 Mac 版</span><span class="btn-meta">Apple 晶片 · 約 8MB · 需要 Homebrew</span>
-    </a>
-  </div>
-  <p class="cta-note">下載鈕永遠是最新版。舊版與更新紀錄在 <a href="https://github.com/dvdmaru/kandong/releases">GitHub Releases</a>。</p>
-
-  <div class="notice">
-    <p class="notice-title">預覽版要先做一件事</p>
-    <p>播放器需要搭配一個你自己開的「翻譯伺服器」（免費的 llama.cpp＋騰訊 Hy-MT2 翻譯模型），第一次會下載約 4.6GB 的模型。下載包裡的「使用說明.txt」有一步一步的做法。之後的正式版會把伺服器內建進播放器，下載就能用。</p>
-  </div>
-</section>
-
-<section class="shot wrap">
-  <figure class="frame">
-    <img src="img/watching.jpg" width="1280" height="720" alt="看懂播放畫面：上方英文原文字幕，下方台灣繁中譯文">
-    <figcaption>正常看片：上英文、下繁中，控制列自動收起。</figcaption>
-  </figure>
-</section>
-
-<section class="wrap section">
-  <p class="eyebrow">01 · 能做什麼</p>
-  <h2>把外語片變成雙語字幕</h2>
-  <div class="features">
-    <div class="feature">
-      <h3>雙語字幕</h3>
-      <p>外掛字幕（.srt／.ass／.vtt）或 mkv 內嵌字幕，自動在下方加上繁中譯文。整部片的字幕會先翻好，看的時候幾乎不用等。</p>
+  <header style="border-bottom: 1px solid #ecd9d0; background: #fff8f2">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap">
+      <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #201914">
+        <span style="width: 34px; height: 34px; border-radius: 8px; background: #7c4241; color: #fff8f2; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 20px">懂</span>
+        <span style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 22px">看懂</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #786866; letter-spacing: 0.08em">KanDong</span>
+      </a>
+      <nav style="display: flex; gap: 20px; font-size: 15px; flex-wrap: wrap; align-items: center">
+        <a href="/guide/" style="color: #5a4845; text-decoration: none">圖文教學</a>
+        <a href="#faq" style="color: #5a4845; text-decoration: none">常見問題</a>
+        <a href="https://github.com/dvdmaru/kandong" style="color: #5a4845; text-decoration: none">GitHub</a>
+        <a href="#download" style="background: #201914; color: #fff8f2; text-decoration: none; padding: 8px 16px; border-radius: 999px; font-weight: 700">免費下載</a>
+      </nav>
     </div>
-    <div class="feature">
-      <h3>沒字幕也能看</h3>
-      <p>找不到文字字幕時，自動用語音辨識（whisper.cpp）聽寫出字幕，再翻成繁中。</p>
+  </header>
+
+  <section style="max-width: 1120px; margin: 0 auto; padding: 64px 20px 40px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
+    <div style="flex: 1 1 440px; min-width: 0">
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px">
+        <span style="background: #fdebc2; color: #6b4600; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px">免費・開源</span>
+        <span style="background: #f4e1dd; color: #7c4241; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px">Windows／Mac</span>
+        <span style="background: #e1efec; color: #1d5c58; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px">影片不上傳</span>
+      </div>
+      <h1 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(40px, 8vw, 64px); line-height: 1.2; margin: 0 0 20px; letter-spacing: 0.01em">影片沒中文字幕？<br><span style="display: inline-block; background: #f5b83d; color: #201914; padding: 0 12px; border-radius: 6px; transform: rotate(-1.5deg); margin-top: 8px">一看就懂。</span></h1>
+      <p style="font-size: 20px; margin: 0 0 10px; max-width: 34em">看懂是一個會「邊播邊翻譯」的影片播放器。外語片自動在原文字幕下方加上台灣繁中譯文；沒字幕的片，先聽寫出字幕再翻譯。</p>
+      <p style="font-size: 15px; color: #5a4845; margin: 0 0 28px; max-width: 36em">播你自己的影片檔：不提供影片、不下載字幕。翻譯在你自己的電腦上跑，影片和字幕不會上傳到任何地方。</p>
+      <div id="download" style="display: flex; gap: 12px; flex-wrap: wrap">
+        <a href="https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-windows-x64.zip" data-dl="windows" style="display: flex; flex-direction: column; text-decoration: none; background: #7c4241; color: #fff8f2; padding: 14px 22px; border-radius: 12px; min-width: 220px; border: 2px solid #201914; box-shadow: 4px 4px 0 #201914">
+          <span style="font-weight: 900; font-size: 19px">下載 Windows 版</span>
+          <span style="font-size: 13px; opacity: 0.9">Windows 10／11・約 146MB・內附翻譯引擎</span>
+        </a>
+        <a href="https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-mac.zip" data-dl="mac" style="display: flex; flex-direction: column; text-decoration: none; background: #fff8f2; color: #201914; padding: 14px 22px; border-radius: 12px; min-width: 220px; border: 2px solid #201914; box-shadow: 4px 4px 0 #201914">
+          <span style="font-weight: 900; font-size: 19px">下載 Mac 版</span>
+          <span style="font-size: 13px; color: #5a4845">Apple 晶片・約 8MB・需要 Homebrew</span>
+        </a>
+      </div>
+      <p style="font-size: 14px; color: #786866; margin: 16px 0 0">第一次用？<a href="/guide/">跟著圖文教學三步做完</a>。下載鈕永遠是最新版。</p>
     </div>
-    <div class="feature">
-      <h3>台灣用語</h3>
-      <p>翻譯針對台灣繁中調整過：口語、俚語用意譯，不是一個字一個字直翻。翻好的存在影片旁邊，重看不必再翻。</p>
+    <div style="flex: 1 1 460px; min-width: 0; position: relative; padding: 24px 8px">
+      <div style="transform: rotate(2deg); border: 2px solid #201914; border-radius: 14px; overflow: hidden; box-shadow: 8px 8px 0 #f5b83d; background: #000">
+        <img src="img/watching.jpg" alt="看懂播放畫面：上方英文原文字幕，下方台灣繁中譯文" style="display: block; width: 100%; height: auto">
+      </div>
+      <span style="position: absolute; left: -4px; top: 46%; background: #fff8f2; border: 2px solid #201914; border-radius: 999px; padding: 4px 14px; font-size: 14px; font-weight: 700; transform: rotate(-4deg)">原文字幕</span>
+      <span style="position: absolute; right: 0; bottom: 4px; background: #1d5c58; color: #fff8f2; border: 2px solid #201914; border-radius: 999px; padding: 4px 14px; font-size: 14px; font-weight: 700; transform: rotate(3deg)">自動加上繁中譯文</span>
     </div>
-    <div class="feature">
-      <h3>滑鼠就能操作</h3>
-      <p>右鍵選單、底部控制列、字幕軌和音軌用滑鼠選；倍速 0.5x 到 3x，變速不變調。</p>
+  </section>
+
+  <section style="max-width: 1120px; margin: 0 auto; padding: 48px 20px">
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #786866; margin: 0 0 8px">BEFORE ／ AFTER</p>
+    <h2 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(30px, 6vw, 40px); margin: 0 0 28px">同一句台詞，差別在這裡</h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap">
+      <div style="flex: 1 1 320px; min-width: 0">
+        <div style="background: #14100e; border-radius: 14px; aspect-ratio: 16 / 7; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 20px; box-sizing: border-box; border: 2px solid #201914">
+          <span style="color: #ffffff; font-size: 22px; text-align: center">Copy that. We are looking at plan B.</span>
+        </div>
+        <p style="margin: 12px 0 0; color: #5a4845; font-size: 15px"><strong style="color: #201914">原本</strong>：只有英文，聽不懂就只能倒回去再看一次。</p>
+      </div>
+      <div style="flex: 1 1 320px; min-width: 0">
+        <div style="background: #14100e; border-radius: 14px; aspect-ratio: 16 / 7; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; padding: 20px; box-sizing: border-box; border: 2px solid #201914; box-shadow: 6px 6px 0 #f5b83d">
+          <span style="color: #ffffff; font-size: 22px; text-align: center">Copy that. We are looking at plan B.</span>
+          <span style="color: #f5b83d; font-size: 20px; font-weight: 700; text-align: center">明白。我們正在考慮 B 計畫。</span>
+        </div>
+        <p style="margin: 12px 0 0; color: #5a4845; font-size: 15px"><strong style="color: #201914">用看懂</strong>：原文照看，下方自動多一行台灣繁中，整部片先翻好。</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="wrap section">
-  <p class="eyebrow">02 · 畫面</p>
-  <h2>看起來是這樣</h2>
-  <div class="gallery">
-    <figure class="frame"><img src="img/controls.jpg" width="1280" height="720" loading="lazy" alt="滑鼠移到下方時出現的控制列"><figcaption>滑鼠移到下方：控制列與時間軸。</figcaption></figure>
-    <figure class="frame"><img src="img/menu-subtitles.jpg" width="1280" height="720" loading="lazy" alt="右鍵選單的字幕子選單"><figcaption>右鍵選單：字幕、音訊、倍速一層層展開。</figcaption></figure>
-    <figure class="frame"><img src="img/subtitle-tracks.jpg" width="1280" height="720" loading="lazy" alt="字幕軌選單列出內嵌與外掛字幕"><figcaption>字幕軌：內嵌、外掛字幕用滑鼠選。</figcaption></figure>
-    <figure class="frame"><img src="img/tracks.jpg" width="1280" height="720" loading="lazy" alt="音軌選單列出原音與講評音軌"><figcaption>音軌：原音、配音、講評一鍵切換。</figcaption></figure>
-  </div>
-</section>
+  <section style="max-width: 1120px; margin: 0 auto; padding: 48px 20px">
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #786866; margin: 0 0 8px">三步開始</p>
+    <h2 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(30px, 6vw, 40px); margin: 0 0 28px">雙擊三次，就能看了</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px">
+      <div style="background: #ffffff; border: 2px solid #201914; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0 #201914">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #f5b83d; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">1</div>
+        <h3 style="font-size: 21px; margin: 16px 0 6px; font-weight: 900">下載解壓</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">解壓到桌面或任何資料夾。Windows 版連翻譯引擎都包好了。</p>
+      </div>
+      <div style="background: #ffffff; border: 2px solid #201914; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0 #201914">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #f4e1dd; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">2</div>
+        <h3 style="font-size: 21px; margin: 16px 0 6px; font-weight: 900">拿翻譯模型</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">雙擊「一鍵下載模型」，或照連結自己下載、放進 models 資料夾。只要做一次。</p>
+      </div>
+      <div style="background: #ffffff; border: 2px solid #201914; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0 #201914">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #e1efec; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">3</div>
+        <h3 style="font-size: 21px; margin: 16px 0 6px; font-weight: 900">雙擊「看懂」</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">翻譯引擎自動開好，播放器跟著出現，把影片拖進去就開播。</p>
+      </div>
+    </div>
+    <p style="margin: 20px 0 0; font-size: 15px"><a href="/guide/" style="font-weight: 700">看每一步的圖文說明 →</a></p>
+  </section>
 
-<section class="wrap section" id="start">
-  <p class="eyebrow">03 · 怎麼開始</p>
-  <h2>三個步驟</h2>
-  <ol class="steps">
-    <li><span class="step-n">1</span><div><h3>下載並解壓</h3><p>Windows 解壓到任何地方即可；Mac 先用 Homebrew 裝好 <code>mpv ffmpeg llama.cpp whisper-cpp</code>。</p></div></li>
-    <li><span class="step-n">2</span><div><h3>開翻譯伺服器</h3><p>照「使用說明.txt」開一個翻譯伺服器（第一次會下載模型）。伺服器可以和播放器在同一台電腦，也可以放在區網另一台。</p></div></li>
-    <li><span class="step-n">3</span><div><h3>把影片拖進去</h3><p>Windows 把影片拖到 <code>mpv.exe</code>；Mac 雙擊「看懂.command」後把影片拖進視窗。字幕會自動變成雙語。</p></div></li>
-  </ol>
-  <div class="req">
-    <h3>建議配備</h3>
-    <ul>
-      <li>記憶體 16GB（8GB 也能用，改用較小的 1.8B 模型）</li>
-      <li>Mac：Apple 晶片（M1 以後）。實測 M4／16GB 每句約 1–1.5 秒（7B 模型），1.8B 約 0.25 秒</li>
-      <li>Windows：64 位元 Windows 10／11；有獨立顯示卡會快很多</li>
-    </ul>
-  </div>
-</section>
+  <section style="max-width: 1120px; margin: 0 auto; padding: 48px 20px">
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #786866; margin: 0 0 8px">能做什麼</p>
+    <h2 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(30px, 6vw, 40px); margin: 0 0 28px">外語片變雙語片</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px">
+      <div style="border-top: 4px solid #7c4241; padding-top: 16px">
+        <h3 style="font-size: 20px; margin: 0 0 6px; font-weight: 900">雙語字幕</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">外掛 .srt／.ass／.vtt 或 mkv 內嵌字幕都行，整部片先翻好，看的時候不用等。</p>
+      </div>
+      <div style="border-top: 4px solid #f5b83d; padding-top: 16px">
+        <h3 style="font-size: 20px; margin: 0 0 6px; font-weight: 900">沒字幕也能看</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">找不到字幕就自動語音辨識，聽寫出原文再翻成繁中。</p>
+      </div>
+      <div style="border-top: 4px solid #1d5c58; padding-top: 16px">
+        <h3 style="font-size: 20px; margin: 0 0 6px; font-weight: 900">台灣用語</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">口語、俚語用意譯，不逐字直翻。翻好的存在影片旁，重看免等。</p>
+      </div>
+      <div style="border-top: 4px solid #201914; padding-top: 16px">
+        <h3 style="font-size: 20px; margin: 0 0 6px; font-weight: 900">滑鼠就能操作</h3>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">右鍵選單、控制列、字幕軌與音軌一點就換；0.5x 到 3x 倍速不變調。</p>
+      </div>
+    </div>
+  </section>
 
-<section class="wrap section" id="faq">
-  <p class="eyebrow">04 · 常見問題</p>
-  <h2>常見問題</h2>
-  <details class="faq-item">
-    <summary><span>要錢嗎？</span><span class="faq-icon" aria-hidden="true">+</span></summary>
-    <div class="faq-body">不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，llama.cpp、whisper.cpp 都是 MIT，全部免費。</div>
-  </details>
-  <details class="faq-item">
-    <summary><span>影片或字幕會被上傳嗎？</span><span class="faq-icon" aria-hidden="true">+</span></summary>
-    <div class="faq-body">不會。翻譯和語音辨識都在你自己開的伺服器上跑（同一台電腦或你家區網裡的電腦），播放器不連任何雲端服務。</div>
-  </details>
-  <details class="faq-item">
-    <summary><span>可以看 Netflix 之類的串流嗎？</span><span class="faq-icon" aria-hidden="true">+</span></summary>
-    <div class="faq-body">不行。看懂只播你電腦裡的影片檔，刻意不下載字幕、不攔截串流、不破解 DRM。</div>
-  </details>
-  <details class="faq-item">
-    <summary><span>翻得準嗎？</span><span class="faq-icon" aria-hidden="true">+</span></summary>
-    <div class="faq-body">一般對話、口語和俚語大多翻得自然；已知的限制是人名常被音譯（例如 Marcus 變成「馬庫斯」），之後會做譯名修正。機器翻譯難免出錯，重要內容請以原文為準。</div>
-  </details>
-  <details class="faq-item">
-    <summary><span>為什麼還要自己開伺服器？</span><span class="faq-icon" aria-hidden="true">+</span></summary>
-    <div class="faq-body">預覽版先把播放和翻譯體驗做好，翻譯模型另外跑。正式版會讓播放器自己在背景啟動模型、第一次啟動時只下載需要的模型，之後完全離線使用。</div>
-  </details>
-  <details class="faq-item">
-    <summary><span>哪裡回報問題？</span><span class="faq-icon" aria-hidden="true">+</span></summary>
-    <div class="faq-body">到 <a href="https://github.com/dvdmaru/kandong/issues">GitHub Issues</a> 開一則，附上作業系統、影片格式和畫面左上角出現的訊息會最快。</div>
-  </details>
-</section>
-</main>
+  <section style="max-width: 1120px; margin: 0 auto; padding: 48px 20px">
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #786866; margin: 0 0 8px">畫面</p>
+    <h2 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(30px, 6vw, 40px); margin: 0 0 28px">看起來是這樣</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px">
+      <figure style="margin: 0">
+        <img src="img/controls.jpg" alt="滑鼠移到下方時出現的控制列" style="display: block; width: 100%; height: auto; border: 2px solid #201914; border-radius: 12px">
+        <figcaption style="font-size: 14px; color: #5a4845; margin-top: 8px">滑鼠移到下方：控制列與時間軸</figcaption>
+      </figure>
+      <figure style="margin: 0">
+        <img src="img/menu-subtitles.jpg" alt="右鍵選單的字幕子選單" style="display: block; width: 100%; height: auto; border: 2px solid #201914; border-radius: 12px">
+        <figcaption style="font-size: 14px; color: #5a4845; margin-top: 8px">右鍵選單：字幕、音訊、倍速一層層展開</figcaption>
+      </figure>
+      <figure style="margin: 0">
+        <img src="img/tracks.jpg" alt="音軌選單列出原音與講評音軌" style="display: block; width: 100%; height: auto; border: 2px solid #201914; border-radius: 12px">
+        <figcaption style="font-size: 14px; color: #5a4845; margin-top: 8px">音軌：原音、配音、講評一鍵切換</figcaption>
+      </figure>
+    </div>
+  </section>
 
-<footer class="foot">
-  <div class="wrap foot-row">
-    <p><span class="brand-dot"></span> 看懂 KanDong · <a href="https://twtools.cc/">TWTools</a> 家族作品</p>
-    <p><a href="https://github.com/dvdmaru/kandong">原始碼</a> · <a href="https://github.com/dvdmaru/kandong/blob/main/THIRD_PARTY.md">第三方授權</a> · MIT 授權</p>
-  </div>
-</footer>
+  <section id="faq" style="max-width: 820px; margin: 0 auto; padding: 48px 20px">
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em; color: #786866; margin: 0 0 8px">常見問題</p>
+    <h2 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(30px, 6vw, 40px); margin: 0 0 20px">你可能想問</h2>
+    <details style="border-top: 2px solid #201914; padding: 18px 0">
+      <summary style="font-weight: 900; font-size: 18px; cursor: pointer">要錢嗎？</summary>
+      <p style="margin: 10px 0 0; color: #5a4845">不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。</p>
+    </details>
+    <details style="border-top: 2px solid #201914; padding: 18px 0">
+      <summary style="font-weight: 900; font-size: 18px; cursor: pointer">影片或字幕會被上傳嗎？</summary>
+      <p style="margin: 10px 0 0; color: #5a4845">不會。翻譯和語音辨識都在你自己的電腦上跑，播放器不連任何雲端服務。只有第一次下載模型時會連到 Hugging Face。</p>
+    </details>
+    <details style="border-top: 2px solid #201914; padding: 18px 0">
+      <summary style="font-weight: 900; font-size: 18px; cursor: pointer">這是看片網站嗎？能看 Netflix 嗎？</summary>
+      <p style="margin: 10px 0 0; color: #5a4845">都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。</p>
+    </details>
+    <details style="border-top: 2px solid #201914; padding: 18px 0">
+      <summary style="font-weight: 900; font-size: 18px; cursor: pointer">我的電腦跑得動嗎？</summary>
+      <p style="margin: 10px 0 0; color: #5a4845">記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。實測 Apple M4／16GB 每句約 1–1.5 秒，有字幕的片會先翻好整部。</p>
+    </details>
+    <details style="border-top: 2px solid #201914; border-bottom: 2px solid #201914; padding: 18px 0">
+      <summary style="font-weight: 900; font-size: 18px; cursor: pointer">翻得準嗎？</summary>
+      <p style="margin: 10px 0 0; color: #5a4845">一般對話、口語大多自然；人名常被音譯（例如 Marcus 變成「馬庫斯」），之後會改進。機器翻譯難免出錯，重要內容請以原文為準。</p>
+    </details>
+  </section>
+
+  <footer style="border-top: 1px solid #ecd9d0; margin-top: 40px">
+    <div style="max-width: 1120px; margin: 0 auto; padding: 24px 20px 40px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; color: #786866">
+      <span>看懂 KanDong・<a href="https://twtools.cc/" style="color: #5a4845">TWTools</a> 家族作品</span>
+      <span><a href="https://github.com/dvdmaru/kandong" style="color: #5a4845">原始碼</a>・<a href="https://github.com/dvdmaru/kandong/blob/main/THIRD_PARTY.md" style="color: #5a4845">第三方授權</a>・MIT 授權</span>
+    </div>
+  </footer>
+</div>
 </body>
 </html>

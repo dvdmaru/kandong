@@ -1,31 +1,24 @@
-看懂 KanDong — Mac 預覽版
-==========================
+看懂 KanDong — Mac 版
+=====================
 
-看懂是一個會「邊播邊翻譯字幕」的影片播放器：外語片自動在原文字幕下方加上台灣繁中譯文；
-沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。翻譯全部在你自己的 Mac 上跑，影片和字幕不會上傳到任何地方。
+影片沒中文字幕？一看就懂。
+看懂會在原文字幕下方自動加上台灣繁中譯文；沒有字幕的片，先用語音辨識聽寫出字幕再翻譯。
+播你自己的影片檔，不提供影片、不下載字幕。翻譯在你自己的 Mac 上跑，影片和字幕不會上傳到任何地方。
 
 【需要】
-- Apple 晶片（M1 以後）的 Mac，記憶體 16GB 建議（8GB 請用小模型）。
-- Homebrew（https://brew.sh）。裝好後在 Terminal 跑一次：
+- Apple 晶片（M1 以後）的 Mac；記憶體 16GB 用標準模型，8GB 用輕量模型。
+- Homebrew（https://brew.sh）。裝好後在 Terminal 貼上這一行，只要做一次：
     brew install mpv ffmpeg llama.cpp whisper-cpp
 
-【預覽版的門檻：要先開翻譯伺服器】
-之後的正式版會把伺服器內建進播放器；預覽版請開一個 Terminal 視窗跑（第一次會下載約 4.6GB 的模型）：
-    bash ~/Downloads/KanDong/server/start-translate-server.sh
-（KanDong 資料夾放在別處就換成那個路徑；記憶體 8GB 的 Mac 在指令前面加 KANDONG_MODEL=1.8b 用小模型）
-只有看「沒字幕的片」才需要語音辨識伺服器，再開一個 Terminal 視窗跑：
-    bash ~/Downloads/KanDong/server/start-whisper-server.sh
-這兩個視窗看片時要保持開著。
+【三步開始】
+1. 把 KanDong 資料夾放在任何地方（例如「應用程式」或「文件」）。
+2. 拿翻譯模型（只要做一次），兩種方法擇一：
+   A. 雙擊「一鍵下載模型.command」，照畫面選編號（會自動下載並檢查檔案）
+   B. 自己下載：打開 models 資料夾裡的「把模型放這裡.txt」，照裡面的連結下載，檔案放進 models 資料夾
+3. 雙擊「看懂.command」，等翻譯引擎就緒後會開出播放器，把影片拖進去就開始播。
 
-【使用】
-雙擊「看懂.command」→ 出現黑色視窗後，把影片拖進去就開始播。
-第一次雙擊若被 macOS 擋下（「無法打開，因為它來自未識別的開發者」）：
-在 Finder 對「看懂.command」按右鍵 →「打開」→ 再按一次「打開」，之後就能直接雙擊。
-
-- 有字幕（外掛 .srt／.ass／.vtt，或 mkv 內嵌）：自動雙語顯示，而且會先把整部片的字幕翻好。
-- 沒字幕：自動語音辨識，約 20–30 秒後出現雙語字幕。
-- 翻好的譯文存在影片旁邊（<影片名>.ft.zh-TW.json／.srt），重看不必再翻。
-- 設定檔在 ~/.config/kandong/mpv/script-opts/floattranslate.conf（伺服器在別台電腦時改 endpoint）。
+第一次雙擊 .command 若被擋（「無法打開，因為它來自未識別的開發者」）：
+在 Finder 對它按右鍵 →「打開」→ 再按一次「打開」，之後就能直接雙擊。
 
 【操作】
   滑鼠右鍵    選單（播放、字幕、音訊、翻譯、倍速、設定）
@@ -39,9 +32,16 @@
   v           隱藏原文字幕（只看譯文）
   空白鍵 暫停；f 全螢幕；q 離開
 
-【這個播放器刻意不做的事】
-不下載字幕、不攔截串流、不破解 DRM（Netflix 等串流平台不支援）。
+【常見問題】
+- 翻譯引擎啟動失敗：多半是記憶體不夠，改用輕量模型（一鍵下載選 2）；記錄在 ~/Library/Logs/KanDong。
+- 沒字幕的片：需要先下載語音辨識模型（一鍵下載選 3）。
+- 翻好的譯文存在影片旁邊（<影片名>.ft.zh-TW.json／.srt），重看不必再翻。
+- 設定檔在 ~/.config/kandong/mpv/script-opts/floattranslate.conf；翻譯引擎放在區網另一台電腦時改 endpoint，
+  這時「看懂」就不會在本機開引擎。
 
-官網：https://kandong.twtools.cc
+【這個播放器刻意不做的事】
+不提供影片、不下載字幕、不攔截串流、不破解 DRM（Netflix 等串流平台不支援）。
+
+官網與圖文教學：https://kandong.twtools.cc
 原始碼與問題回報：https://github.com/dvdmaru/kandong
 授權：看懂本身是 MIT；mpv、uosc 等各有授權，見 licenses 資料夾。

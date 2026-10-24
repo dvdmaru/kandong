@@ -59,6 +59,30 @@ bash "${WORK}/ui-win/install-uosc.sh" "${W}/portable_config" >/dev/null
 rm -f "${W}/portable_config/scripts/uosc/bin/ziggy-darwin" "${W}/portable_config/scripts/uosc/bin/ziggy-linux"
 cp "${REPO}/scripts/floattranslate.lua" "${W}/portable_config/scripts/"
 cp "${REPO}/script-opts/floattranslate.conf" "${W}/portable_config/script-opts/"
+
+# 內附引擎（固定版本、驗 SHA256）：llama.cpp b10204（與 Mac 實測同版）Vulkan 版＋whisper.cpp b5454
+fetch_engine() {  # $1 url  $2 sha256  $3 解壓目錄
+  curl -fsSL -o "${WORK}/engine.zip" "$1"
+  [ "$(shasum -a 256 "${WORK}/engine.zip" | awk '{print $1}')" = "$2" ] || { echo "引擎 SHA256 不符：$1"; exit 1; }
+  rm -rf "$3" && mkdir -p "$3" && unzip -q "${WORK}/engine.zip" -d "$3"
+}
+fetch_engine https://github.com/ggml-org/llama.cpp/releases/download/b10204/llama-b10204-bin-win-vulkan-x64.zip \
+  6f950679d1b2c696033d1c0c59dc595793504aaad89a43f1184b782263414ddd "${WORK}/llama"
+fetch_engine https://github.com/ggml-org/whisper.cpp/releases/download/b5454/whisper-bin-x64.zip \
+  6ba69e3482d7826214f90a6a9c84ca07782aec1e1d0c6a7c30c994fd5d816ccb "${WORK}/whisper"
+mkdir -p "${W}/engine/llama" "${W}/engine/whisper"
+cp "${WORK}/llama/llama-server.exe" "${WORK}/llama/"*.dll "${W}/engine/llama/"
+cp "${WORK}/whisper/Release/whisper-server.exe" "${WORK}/whisper/Release/"*.dll "${W}/engine/whisper/"
+
+# 啟動器：.ps1 轉 UTF-8 BOM＋CRLF（Windows PowerShell 5.1 沒 BOM 會用 Big5 讀中文）；.bat 轉 CRLF
+mkdir -p "${W}/scripts" "${W}/models"
+for f in launch.ps1 download-models.ps1; do
+  { printf '\357\273\277'; sed 's/$/\r/' "${REPO}/packaging/windows/scripts/${f}"; } > "${W}/scripts/${f}"
+done
+for f in 看懂.bat 一鍵下載模型.bat; do
+  sed 's/$/\r/' "${REPO}/packaging/windows/${f}" > "${W}/${f}"
+done
+sed 's/$/\r/' "${REPO}/packaging/models-README.txt" > "${W}/models/把模型放這裡.txt"
 # Windows 記事本友善：使用說明轉 CRLF
 sed 's/$/\r/' "${REPO}/packaging/windows-README.txt" > "${W}/使用說明.txt"
 common_docs "${W}"
@@ -71,12 +95,21 @@ cp -R "${REPO}/scripts" "${REPO}/script-opts" "${REPO}/mac" "${REPO}/server" "${
 cp "${REPO}/ui/"*.conf "${REPO}/ui/uosc-zh-TW.json" "${REPO}/ui/install-uosc.sh" "${M}/ui/"
 cp "${WORK}/vendor/uosc.zip" "${M}/ui/vendor/"
 cp "${REPO}/packaging/mac-README.txt" "${M}/使用說明.txt"
+mkdir -p "${M}/models"
+cp "${REPO}/packaging/models-README.txt" "${M}/models/把模型放這裡.txt"
 cat > "${M}/看懂.command" <<'EOF'
 #!/bin/bash
 # 雙擊啟動看懂 KanDong（會開一個 Terminal 視窗，播放時請保持開著）
 exec bash "$(cd "$(dirname "$0")" && pwd)/mac/kandong.sh" "$@"
 EOF
-chmod +x "${M}/看懂.command" "${M}/mac/kandong.sh" "${M}/server/"*.sh "${M}/ui/install-uosc.sh"
+cat > "${M}/一鍵下載模型.command" <<'EOF'
+#!/bin/bash
+# 雙擊下載看懂需要的模型（從 Hugging Face 官方下載到 KanDong/models，會檢查檔案是否完整）
+bash "$(cd "$(dirname "$0")" && pwd)/mac/download-models.sh"
+echo ""
+read -r -p "按 Enter 關閉這個視窗" _
+EOF
+chmod +x "${M}/看懂.command" "${M}/一鍵下載模型.command" "${M}/mac/"*.sh "${M}/server/"*.sh "${M}/ui/install-uosc.sh"
 common_docs "${M}"
 python3 "${REPO}/packaging/mkzip.py" "${OUT}/KanDong-mac.zip" "${WORK}/mac" KanDong
 
