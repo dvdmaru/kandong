@@ -8,4 +8,4 @@
 - [x] sitemap.xml、llms.txt 與首頁／教學導覽包含新頁。
 - [x] 簡體字陰性對照先失敗；全頁字形、全部連結、schema 與手機寬度有實測證據。
 - [x] 每個公開數字有來源對照；每篇有全文閱讀與想跳過段落記錄。
-- [ ] git diff 僅 site/；commit 作者與提交者都是 GitHub 隱藏信箱；遠端 draft PR 可讀回。
+- [x] git diff 僅 site/；commit 作者與提交者都是 GitHub 隱藏信箱；遠端 draft PR #2 已讀回（draft=true、merged=false，42 個檔案均在 site/）。見 delivery.md。
