@@ -148,7 +148,24 @@ FONTS = ('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700
          '&family=Noto+Serif+TC:wght@900&family=JetBrains+Mono:wght@500&display=swap')
 NAV = [('/guide/', '圖文教學'), ('/articles/', '字幕指南'), ('/faq/', '常見問題')]
 
-# Same header, footer, fonts and analytics as the landing page and visual tutorial.
+# One header and footer for every page, styled by /site.css.
+def site_header(path):
+    current = ' aria-current="page"'
+    nav = ''.join(f'<a href="{href}"{current if path.startswith(href) else ""}>{label}</a>' for href, label in NAV)
+    return ('<header class="site-header"><div class="bar">\n'
+            '<a class="logo" href="/" aria-label="看懂 KanDong 首頁"><span class="logo-mark" aria-hidden="true">懂</span>'
+            '<span class="logo-word">看懂</span><span class="logo-en" aria-hidden="true">KanDong</span></a>\n'
+            f'<nav class="site-nav" aria-label="主選單">{nav}<a href="https://github.com/dvdmaru/kandong">GitHub</a></nav>\n'
+            '<a class="pill" href="/#download">免費下載</a>\n'
+            '</div></header>')
+
+
+SITE_FOOTER = ('<footer class="site-footer"><div class="bar">\n'
+               '<span>看懂 KanDong・<a href="https://twtools.cc/">TWTools</a> 家族作品</span>\n'
+               '<span><a href="https://github.com/dvdmaru/kandong">原始碼</a>・'
+               '<a href="https://github.com/dvdmaru/kandong/blob/main/THIRD_PARTY.md">第三方授權</a>・MIT 授權</span>\n'
+               '</div></footer>')
+
 FAQ_GROUPS = [
     ('g-models', '選模型', 'sun', ['models', 'hy-mt2', 'switch']),
     ('g-platform', '支援與隱私', 'rose', ['platforms', 'privacy']),
@@ -190,8 +207,6 @@ def render(path, title, description, answer, body, article=False, faq=None, head
     ) + '</script>' if schemas else ''
     if heading:
         assert plain(heading) == title or not article, 'Article headline must equal the visible h1'
-    current = ' aria-current="page"'
-    nav = ''.join(f'<a href="{href}"{current if path.startswith(href) else ""}>{label}</a>' for href, label in NAV)
     document = f'''<!doctype html>
 <html lang="zh-Hant-TW"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -207,7 +222,7 @@ def render(path, title, description, answer, body, article=False, faq=None, head
 <link rel="icon" href="{FAVICON}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{html.escape(FONTS, quote=True)}">
-<link rel="stylesheet" href="/reading.css">
+<link rel="stylesheet" href="/site.css"><link rel="stylesheet" href="/reading.css">
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA}"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -217,10 +232,7 @@ gtag('config', '{GA}');
 </script>{structured}
 </head><body>
 <a class="skip" href="#main">跳到內容</a>
-<header class="site-header"><div class="bar">
-<a class="logo" href="/" aria-label="看懂 KanDong 首頁"><span class="logo-mark" aria-hidden="true">懂</span><span class="logo-word">看懂</span></a>
-<nav class="site-nav" aria-label="主選單">{nav}<a class="pill" href="/#download">免費下載</a></nav>
-</div></header>
+{site_header(path)}
 <main id="main"><article class="{width}">
 <p class="eyebrow">{eyebrow}</p>
 <h1>{heading or html.escape(title)}</h1>
@@ -228,10 +240,7 @@ gtag('config', '{GA}');
 {body}
 {after}
 </article></main>
-<footer class="site-footer"><div class="bar">
-<span>看懂 KanDong・<a href="https://twtools.cc/">TWTools</a> 家族作品</span>
-<span><a href="https://github.com/dvdmaru/kandong">原始碼</a>・MIT 授權</span>
-</div></footer>
+{SITE_FOOTER}
 </body></html>
 '''
     target = PUBLIC / path.strip('/') / 'index.html'
@@ -309,10 +318,12 @@ for legacy in ['index.html', 'guide/index.html']:
     content = content.replace('html,body{margin:0;background:#fff8f2;overflow-x:hidden}',
                               '*{box-sizing:border-box}html,body{margin:0;background:#fff8f2}')
     content = content.replace('minmax(300px, 1fr)', 'minmax(min(100%, 300px), 1fr)')
-    marker = '      <nav style="display: flex; gap: 20px; font-size: 15px; flex-wrap: wrap; align-items: center">'
-    additions = '\n        <a href="/articles/" style="color: #5a4845; text-decoration: none">字幕指南</a>\n        <a href="/faq/" style="color: #5a4845; text-decoration: none">完整 FAQ</a>'
-    if 'href="/articles/"' not in content:
-        content = content.replace(marker, marker + additions)
+    page_path = '/' + legacy.removesuffix('index.html')
+    content, n_header = re.subn(r'<header\b.*?</header>', lambda _: site_header(page_path), content, count=1, flags=re.S)
+    content, n_footer = re.subn(r'<footer\b.*?</footer>', lambda _: SITE_FOOTER, content, count=1, flags=re.S)
+    assert n_header == n_footer == 1, legacy
+    if '/site.css' not in content:
+        content = content.replace('</head>', '<link rel="stylesheet" href="/site.css">\n</head>', 1)
     content = content.replace('（第一次 10–60 秒）', '（載入時間依電腦而異）')
     content = content.replace('約 20–30 秒後出現第一段字幕；', '聽寫與翻譯完成後才會出現字幕；')
     content = content.replace('開 2 倍速以上若出現', '若出現')

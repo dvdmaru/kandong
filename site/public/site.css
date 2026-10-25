@@ -1,0 +1,31 @@
+/* 全站共用的頁首與頁尾；首頁、圖文教學、字幕指南、文章與常見問題都載入這一份。 */
+.skip{position:absolute;top:-100px;left:1rem;background:#fff;padding:.5rem;z-index:10}
+.skip:focus{top:0}
+
+:root{--ink:#201914;--muted:#5a4845;--soft:#786866;--wine:#7c4241;--wine-dark:#5c2f2e;--paper:#fff8f2;--line:#ecd9d0;--sun:#f5b83d;--mint-ink:#1d5c58}
+.site-header{border-bottom:1px solid var(--line);line-height:1.75}
+.bar{max-width:1120px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.site-header .bar{justify-content:flex-start;gap:12px 20px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);margin-right:auto}
+.logo:hover{color:var(--ink)}
+.logo-mark{width:34px;height:34px;border-radius:8px;background:var(--wine);color:var(--paper);display:grid;place-items:center;font-family:'Noto Serif TC',serif;font-weight:900;font-size:20px}
+.logo-en{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:var(--soft);letter-spacing:.08em}
+.logo-word{font-family:'Noto Serif TC',serif;font-weight:900;font-size:22px}
+.site-nav{display:flex;gap:8px 20px;font-size:15px;flex-wrap:wrap;align-items:center}
+.site-nav a{color:var(--muted);text-decoration:none}
+.site-nav a:hover{color:var(--ink)}
+.site-nav a[aria-current=page]{color:var(--ink);font-weight:700;border-bottom:3px solid var(--sun)}
+.pill{flex:none;background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none}
+.pill:hover{background:var(--wine-dark);color:var(--paper)}
+.site-footer{border-top:1px solid var(--line);margin-top:64px;line-height:1.75}
+.site-footer .bar{padding:24px 20px 40px;font-size:14px;color:var(--soft)}
+.site-footer a{color:var(--muted)}
+
+/* 窄螢幕：標誌與下載按鈕同一行，選單換到第二行 */
+@media(max-width:640px){
+  .site-header .site-nav{order:3;width:100%;gap:6px 18px}
+}
+@media(max-width:480px){
+  .bar{padding:12px 16px}
+  .site-header .site-nav{gap:6px 14px}
+}

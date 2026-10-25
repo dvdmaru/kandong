@@ -47,6 +47,7 @@ document.addEventListener('click', function (e) {
 </script>
 
 
+<link rel="stylesheet" href="/site.css">
 
 <!-- editorial-faq:start -->
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "要錢嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。"}}, {"@type": "Question", "name": "影片或字幕會被上傳嗎？", "acceptedAnswer": {"@type": "Answer", "text": "預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。"}}, {"@type": "Question", "name": "這是看片網站嗎？能看 Netflix 嗎？", "acceptedAnswer": {"@type": "Answer", "text": "都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。"}}, {"@type": "Question", "name": "我的電腦跑得動嗎？", "acceptedAnswer": {"@type": "Answer", "text": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。"}}, {"@type": "Question", "name": "翻得準嗎？", "acceptedAnswer": {"@type": "Answer", "text": "人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。"}}]}</script>
@@ -55,23 +56,11 @@ document.addEventListener('click', function (e) {
 <body>
 <div style="font-family: 'Noto Sans TC', sans-serif; color: #201914; background: #fff8f2; line-height: 1.75">
 
-  <header style="border-bottom: 1px solid #ecd9d0; background: #fff8f2">
-    <div style="max-width: 1120px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap">
-      <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #201914">
-        <span style="width: 34px; height: 34px; border-radius: 8px; background: #7c4241; color: #fff8f2; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 20px">懂</span>
-        <span style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 22px">看懂</span>
-        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #786866; letter-spacing: 0.08em">KanDong</span>
-      </a>
-      <nav style="display: flex; gap: 20px; font-size: 15px; flex-wrap: wrap; align-items: center">
-        <a href="/articles/" style="color: #5a4845; text-decoration: none">字幕指南</a>
-        <a href="/faq/" style="color: #5a4845; text-decoration: none">完整 FAQ</a>
-        <a href="/guide/" style="color: #5a4845; text-decoration: none">圖文教學</a>
-        <a href="#faq" style="color: #5a4845; text-decoration: none">常見問題</a>
-        <a href="https://github.com/dvdmaru/kandong" style="color: #5a4845; text-decoration: none">GitHub</a>
-        <a href="#download" style="background: #201914; color: #fff8f2; text-decoration: none; padding: 8px 16px; border-radius: 999px; font-weight: 700">免費下載</a>
-      </nav>
-    </div>
-  </header>
+  <header class="site-header"><div class="bar">
+<a class="logo" href="/" aria-label="看懂 KanDong 首頁"><span class="logo-mark" aria-hidden="true">懂</span><span class="logo-word">看懂</span><span class="logo-en" aria-hidden="true">KanDong</span></a>
+<nav class="site-nav" aria-label="主選單"><a href="/guide/">圖文教學</a><a href="/articles/">字幕指南</a><a href="/faq/">常見問題</a><a href="https://github.com/dvdmaru/kandong">GitHub</a></nav>
+<a class="pill" href="/#download">免費下載</a>
+</div></header>
 
   <section style="max-width: 1120px; margin: 0 auto; padding: 64px 20px 40px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
     <div style="flex: 1 1 440px; min-width: 0">
@@ -214,12 +203,10 @@ document.addEventListener('click', function (e) {
     </details>
   </section>
 
-  <footer style="border-top: 1px solid #ecd9d0; margin-top: 40px">
-    <div style="max-width: 1120px; margin: 0 auto; padding: 24px 20px 40px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; color: #786866">
-      <span>看懂 KanDong・<a href="https://twtools.cc/" style="color: #5a4845">TWTools</a> 家族作品</span>
-      <span><a href="https://github.com/dvdmaru/kandong" style="color: #5a4845">原始碼</a>・<a href="https://github.com/dvdmaru/kandong/blob/main/THIRD_PARTY.md" style="color: #5a4845">第三方授權</a>・MIT 授權</span>
-    </div>
-  </footer>
+  <footer class="site-footer"><div class="bar">
+<span>看懂 KanDong・<a href="https://twtools.cc/">TWTools</a> 家族作品</span>
+<span><a href="https://github.com/dvdmaru/kandong">原始碼</a>・<a href="https://github.com/dvdmaru/kandong/blob/main/THIRD_PARTY.md">第三方授權</a>・MIT 授權</span>
+</div></footer>
 </div>
 </body>
 </html>
