@@ -26,6 +26,8 @@ def sources(items):
 PAGES = [
     {
         'slug': 'no-chinese-subtitles',
+        'tag': '還不確定是哪種',
+        'tone': 'sun',
         'title': '影片沒中文字幕怎麼辦？先分清串流、有字幕與沒字幕',
         'description': '串流平台先找平台提供的字幕；自己的影片檔有英文字幕就直接翻成繁中，完全沒字幕才需要先聽寫。看懂不支援 Netflix 等串流，也不做圖形字幕 OCR。',
         'answer': '影片沒中文字幕，先看影片在哪裡：串流平台用平台提供的字幕選項；有權處理的本機檔案，有文字字幕就翻譯，沒字幕就先語音辨識再翻譯。看懂 KanDong 處理本機影片檔，不支援 Netflix 等串流平台。',
@@ -53,6 +55,8 @@ PAGES = [
     },
     {
         'slug': 'mkv-bilingual-subtitles',
+        'tag': '檔案裡有原文字幕',
+        'tone': 'rose',
         'title': 'MKV 內嵌字幕怎麼變雙語？文字軌直接翻，圖形軌改聽寫',
         'description': '看懂可翻譯 MKV 內嵌文字字幕，保留原文並加上繁中譯文。先選對字幕軌，再排查圖形字幕、燒錄字幕、翻譯開關與快取的差異。',
         'answer': 'MKV 內嵌的是原文文字字幕時，用看懂選好字幕軌並開啟翻譯，就能保留原文、在下方顯示繁中譯文。若內嵌的是 PGS 等圖形字幕，看懂會改走語音辨識再翻譯，不會直接辨識字幕圖片。',
@@ -78,6 +82,8 @@ PAGES = [
     },
     {
         'slug': 'auto-chinese-subtitles',
+        'tag': '完全沒字幕',
+        'tone': 'mint',
         'title': '沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中',
         'description': '沒字幕的影片要先用 Whisper 把對白聽寫成原文，再用 Hy-MT2 翻成繁中；除了翻譯模型，還要多下載約 574MB 的語音辨識模型。',
         'answer': '沒字幕的本機影片，要先用語音辨識把對白轉成原文，再翻成中文字幕。看懂用 whisper.cpp 聽寫、Hy-MT2 翻譯；除了翻譯模型，還要準備 Whisper large-v3-turbo 語音辨識模型。',
@@ -134,7 +140,37 @@ def plain(fragment):
     return ' '.join(''.join(parser.parts).split())
 
 
-def render(path, title, description, answer, body, article=False, faq=None):
+GA = 'G-R9KBKJFEH1'
+FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' "
+           "fill='%237c4241'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff8f2' font-family='serif' "
+           "font-weight='900'%3E懂%3C/text%3E%3C/svg%3E")
+FONTS = ('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900'
+         '&family=Noto+Serif+TC:wght@900&family=JetBrains+Mono:wght@500&display=swap')
+NAV = [('/guide/', '圖文教學'), ('/articles/', '字幕指南'), ('/faq/', '常見問題')]
+
+# Same header, footer, fonts and analytics as the landing page and visual tutorial.
+FAQ_GROUPS = [
+    ('g-models', '選模型', 'sun', ['models', 'hy-mt2', 'switch']),
+    ('g-platform', '支援與隱私', 'rose', ['platforms', 'privacy']),
+    ('g-trouble', '字幕沒出現', 'mint', ['bitmap', 'connection', 'speed']),
+    ('g-result', '翻譯結果', 'paper', ['names', 'cache']),
+]
+FAQ_BY_ID = {i: (i, q, a) for i, q, a in FAQ}
+assert sorted(FAQ_BY_ID) == sorted(i for g in FAQ_GROUPS for i in g[3]), 'every FAQ item belongs to one group'
+FAQ_ORDERED = [FAQ_BY_ID[i] for g in FAQ_GROUPS for i in g[3]]
+
+
+def button(url, label, light=False):
+    return f'<a class="button{" light" if light else ""}" href="{html.escape(url, quote=True)}">{label}</a>'
+
+
+def band(title, text, buttons):
+    return (f'<aside class="band"><div class="band-text"><h2>{title}</h2><p>{text}</p></div>'
+            f'<div class="actions">{"".join(buttons)}</div></aside>')
+
+
+def render(path, title, description, answer, body, article=False, faq=None, heading=None,
+           eyebrow='', width='article', after=''):
     url = BASE + path
     schemas = []
     if article:
@@ -149,55 +185,98 @@ def render(path, title, description, answer, body, article=False, faq=None):
         schemas.append({'@type': 'FAQPage', '@id': url + '#faq', 'mainEntity': [
             {'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': plain(a)}}
             for _, q, a in faq]})
-    structured = '<script type="application/ld+json">' + json.dumps(
+    structured = '\n<script type="application/ld+json">' + json.dumps(
         {'@context': 'https://schema.org', '@graph': schemas}, ensure_ascii=False
     ) + '</script>' if schemas else ''
+    if heading:
+        assert plain(heading) == title or not article, 'Article headline must equal the visible h1'
+    current = ' aria-current="page"'
+    nav = ''.join(f'<a href="{href}"{current if path.startswith(href) else ""}>{label}</a>' for href, label in NAV)
     document = f'''<!doctype html>
 <html lang="zh-Hant-TW"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}｜看懂 KanDong</title>
 <meta name="description" content="{html.escape(description, quote=True)}">
-<link rel="canonical" href="{url}"><link rel="stylesheet" href="/reading.css">
+<link rel="canonical" href="{url}">
 <meta property="og:type" content="{'article' if article else 'website'}">
 <meta property="og:title" content="{html.escape(title, quote=True)}">
 <meta property="og:description" content="{html.escape(description, quote=True)}">
 <meta property="og:url" content="{url}"><meta property="og:site_name" content="看懂 KanDong">
 <meta property="og:image" content="{BASE}/img/og.png"><meta property="og:locale" content="zh_TW">
-<meta name="twitter:card" content="summary_large_image">{structured}
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{FAVICON}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{html.escape(FONTS, quote=True)}">
+<link rel="stylesheet" href="/reading.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA}"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){{dataLayer.push(arguments);}}
+gtag('js', new Date());
+gtag('config', '{GA}');
+</script>{structured}
 </head><body>
 <a class="skip" href="#main">跳到內容</a>
-<header><div class="nav"><a class="brand" href="/">懂 <span>看懂 KanDong</span></a>
-<nav aria-label="主選單"><a href="/articles/">字幕指南</a><a href="/guide/">圖文教學</a><a href="/faq/">常見問題</a><a class="button" href="/#download">免費下載</a></nav></div></header>
-<main id="main"><article>
-<p class="eyebrow">看懂・{'使用支援' if faq else '字幕指南'}</p>
-<h1>{html.escape(title)}</h1>
-<div class="quick-answer"><strong>重點速答</strong><p>{answer}</p></div>
-<p class="byline">看懂 KanDong · <time datetime="{DATE}">{DATE}</time>（台北時間）</p>
+<header class="site-header"><div class="bar">
+<a class="logo" href="/" aria-label="看懂 KanDong 首頁"><span class="logo-mark" aria-hidden="true">懂</span><span class="logo-word">看懂</span></a>
+<nav class="site-nav" aria-label="主選單">{nav}<a class="pill" href="/#download">免費下載</a></nav>
+</div></header>
+<main id="main"><article class="{width}">
+<p class="eyebrow">{eyebrow}</p>
+<h1>{heading or html.escape(title)}</h1>
+<div class="quick-answer"><span class="label">重點速答</span><p>{answer}</p></div>
 {body}
-<aside class="cta" aria-label="開始使用"><h2>準備好自己的影片檔，再開始</h2><p>先照圖文教學完成設定，再挑適合字幕來源的流程。</p><div class="actions"><a class="button" href="/guide/">看圖文教學</a><a class="button secondary" href="{DOWNLOAD}">下載最新版</a></div></aside>
-</article></main><footer><a href="/articles/">字幕指南</a> · <a href="/faq/">常見問題</a> · <a href="https://github.com/dvdmaru/kandong">GitHub 原始碼</a> · <a href="https://twtools.cc/">TWTools</a></footer>
-</body></html>'''
+{after}
+</article></main>
+<footer class="site-footer"><div class="bar">
+<span>看懂 KanDong・<a href="https://twtools.cc/">TWTools</a> 家族作品</span>
+<span><a href="https://github.com/dvdmaru/kandong">原始碼</a>・MIT 授權</span>
+</div></footer>
+</body></html>
+'''
     target = PUBLIC / path.strip('/') / 'index.html'
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(document)
 
 
-for page in PAGES:
-    render('/articles/' + page['slug'] + '/', page['title'], page['description'], page['answer'], page['body'], article=True)
+ARTICLE_EYEBROW = f'<a href="/articles/">字幕指南</a>　／　<time datetime="{DATE}">{DATE}</time>'
+for n, page in enumerate(PAGES):
+    related = '<nav class="related" aria-label="其他字幕指南">' + ''.join(
+        f'<a href="/articles/{p["slug"]}/"><small>{"下一篇" if k == 0 else "也可以看"}・{p["tag"]}</small><strong>{p["title"]}</strong></a>'
+        for k, p in enumerate(PAGES[n + 1:] + PAGES[:n])) + '</nav>'
+    cta = band('準備好自己的影片檔，再開始', '先照圖文教學完成設定，再挑適合字幕來源的流程。',
+               [button('/guide/', '看圖文教學'), button(DOWNLOAD, '下載最新版', light=True)])
+    render('/articles/' + page['slug'] + '/', page['title'], page['description'], page['answer'], page['body'],
+           article=True, eyebrow=ARTICLE_EYEBROW, after=cta + related)
 
-faq_body = '<p>先找眼前卡住的問題。模型選擇與名稱說明放在一起，安裝畫面則留在圖文教學。</p>'
-faq_body += '<nav class="toc" aria-label="問題索引">' + ''.join(link('#' + i, q) for i, q, _ in FAQ) + '</nav>'
-faq_body += ''.join(f'<section class="faq-item" id="{i}"><h2>{q}</h2><div class="faq-answer">{a}</div></section>' for i, q, a in FAQ)
-faq_body += sources([(README, '看懂 README：模型、平台、進階連線與限制'), (REPO + '/mac/kandong.sh', 'Mac 啟動器：模型檔選擇'), (REPO + '/scripts/floattranslate.lua', '字幕腳本：傳送音訊、翻譯與快取條件')])
+faq_body = '<p class="lead">先找眼前卡住的問題。模型選擇與名稱說明放在一起，安裝畫面則留在圖文教學。</p>'
+faq_body += '<nav class="chips" aria-label="問題分類">' + ''.join(
+    f'<a class="tone-{tone}" href="#{gid}">{label}</a>' for gid, label, tone, _ in FAQ_GROUPS) + '</nav>'
+for gid, label, tone, ids in FAQ_GROUPS:
+    faq_body += (f'<section class="faq-group tone-{tone}" id="{gid}"><h2><span class="dot" aria-hidden="true"></span>{label}</h2>'
+                 '<div class="faq-list">' + ''.join(
+                     f'<section class="faq-item" id="{i}"><h3>{q}</h3><div class="faq-answer">{a}</div></section>'
+                     for i, q, a in (FAQ_BY_ID[x] for x in ids)) + '</div></section>')
+faq_after = band('還是不行？', '到 GitHub Issues 開一則，附上作業系統、影片格式、畫面上的訊息，和 logs 資料夾裡的記錄。',
+                 [button('https://github.com/dvdmaru/kandong/issues', '開 Issue'), button('/guide/', '圖文教學', light=True),
+                  button(DOWNLOAD, '下載最新版', light=True)])
+faq_after += sources([(README, '看懂 README：模型、平台、進階連線與限制'), (REPO + '/mac/kandong.sh', 'Mac 啟動器：模型檔選擇'), (REPO + '/scripts/floattranslate.lua', '字幕腳本：傳送音訊、翻譯與快取條件')])
 render('/faq/', '看懂常見問題：模型怎麼選、字幕沒出現與人名音譯',
        '8GB／16GB 模型選擇、Hy-MT2 與 Whisper 分工、切換模型、平台支援、隱私設定和字幕排查。',
-       '選模型先看記憶體；沒字幕的片還需要語音辨識模型。看懂處理本機影片，常見卡關包括選錯字幕類型、引擎未啟動，以及人名被音譯。', faq_body, article=True, faq=FAQ)
+       '選模型先看記憶體；沒字幕的片還需要語音辨識模型。看懂處理本機影片，常見卡關包括選錯字幕類型、引擎未啟動，以及人名被音譯。',
+       faq_body, article=True, faq=FAQ_ORDERED, width='medium', eyebrow='常見問題',
+       heading='看懂<span class="hl">常見問題</span>：模型怎麼選、字幕沒出現與人名音譯', after=faq_after)
 
-cards = ''.join(f'<section class="card"><h2>{link("/articles/" + p["slug"] + "/", p["title"])}</h2><p>{p["description"]}</p></section>' for p in PAGES)
+cards = '<h2>你的影片是哪一種？</h2><div class="cards">' + ''.join(
+    f'<a class="card tone-{p["tone"]}" href="/articles/{p["slug"]}/"><span class="card-top"><span class="num" aria-hidden="true">{n}</span>'
+    f'<span class="tag">{p["tag"]}</span></span><h3>{p["title"]}</h3><p>{p["description"]}</p><span class="more">讀這篇 →</span></a>'
+    for n, p in enumerate(PAGES, 1)) + '</div>'
 render('/articles/', '字幕指南：從沒有中文字幕，到看懂外語影片',
        '依影片來源找做法：串流字幕選項、MKV 內嵌文字字幕翻譯，以及無字幕影片聽寫。模型與故障排查另見常見問題。',
        '串流平台先找平台字幕；本機檔案已有文字字幕就翻譯，沒有文字才聽寫。依手邊影片的情況選一篇，模型選擇與故障排查可直接查常見問題。',
-       cards + '<p>' + link('/faq/#models', '選模型與排查問題，請看常見問題') + '</p>')
+       cards, width='wide', eyebrow='字幕指南', heading='從沒有中文字幕，到<span class="hl">看懂</span>外語影片',
+       after=band('選模型、卡關排查', '8GB／16GB 該選哪個模型、字幕沒出現、人名被音譯，都整理在常見問題。',
+                  [button('/faq/#models', '看常見問題'), button('/guide/', '圖文教學', light=True)]))
 
 routes = ['/', '/guide/', '/articles/'] + ['/articles/' + p['slug'] + '/' for p in PAGES] + ['/faq/']
 (PUBLIC / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{BASE}{r}</loc><lastmod>{DATE}</lastmod></url>\n' for r in routes) + '</urlset>\n')

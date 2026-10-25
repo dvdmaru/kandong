@@ -31,7 +31,7 @@ for (const route of routes) {
     });
     const text=n=>n.textContent.replace(/\s+/g,' ').trim();
     const faq = [...document.querySelectorAll('details')].map(n=>({q:text(n.querySelector('summary')),a:text(n).slice(text(n.querySelector('summary')).length).trim()}));
-    for (const n of document.querySelectorAll('.faq-item')) faq.push({q:text(n.querySelector('h2')),a:text(n.querySelector('.faq-answer'))});
+    for (const n of document.querySelectorAll('.faq-item')) faq.push({q:text(n.querySelector('h3,h2')),a:text(n.querySelector('.faq-answer'))});
     const refs=[...document.querySelectorAll('a[href],img[src],link[rel="stylesheet"],link[rel="canonical"],meta[property="og:image"]')].map(n=>n.getAttribute('href')||n.getAttribute('src')||n.content);
     const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
     const numbers=[];
