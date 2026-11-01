@@ -25,8 +25,9 @@
 | `KanDong-mac.zip` | macOS（Apple 晶片） | 先裝 Homebrew，再跑一次 `brew install mpv ffmpeg llama.cpp whisper-cpp` |
 
 1. **解壓**到任何地方。
-2. **拿翻譯模型**（只要一次）：雙擊「一鍵下載模型」，或照 `models/把模型放這裡.txt` 的連結自己下載後放進 `models` 資料夾。
-3. **雙擊「看懂」**（Mac 是「看懂.command」）：自動開翻譯引擎，再開播放器，把影片拖進去就開始播。
+2. **雙擊「看懂」**（Mac 是「看懂.command」）：自動開翻譯引擎，再開播放器，把影片拖進去就開始播。
+3. **第一次還沒有翻譯模型**：在播放器按右鍵 → 設定 → 翻譯模型與伺服器，點「下載」（Hugging Face 官方、可續傳、下載完會檢查檔案），下載好就自動開始用。
+   也可以雙擊「一鍵下載模型」，或照 `models/把模型放這裡.txt` 的連結自己下載後放進 `models` 資料夾。
 
 | 模型 | 大小 | 什麼時候選 |
 |---|---|---|
@@ -35,6 +36,17 @@
 | Whisper large-v3-turbo（語音辨識） | 約 574MB | 只有看沒字幕的影片才需要 |
 
 實測速度（Apple M4／16GB，含 12 句前文）：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒；有字幕的片會先翻好整部，看的時候幾乎不用等。
+
+## 換模型、用自己的模型
+
+右鍵 → 設定 → 翻譯模型與伺服器：
+
+- **換模型**：列出找得到的模型（`models` 資料夾、`~/.cache/kandong/models`、LM Studio 的模型資料夾），點一下就換。引擎重開約 10–60 秒，期間暫停翻譯；新模型開不起來會自動換回原本的。
+- **下載**：內建清單（7B、1.8B、語音辨識）在播放器裡直接下載，可以邊看片邊下載，中斷了下次接著下。
+- **自己的 GGUF 模型**：放進 `models` 資料夾就會出現在清單；放在別處就用「使用其他位置的模型檔…」貼上路徑。看懂的翻譯指令是為 Hy-MT2 調的，其他模型翻得好不好要自己試。
+- **已經在用 Ollama、LM Studio 或區網另一台電腦的翻譯服務**：「連到其他翻譯伺服器」，選好模型後會先實際翻一句測試，成功才改用，同時關掉本機引擎把記憶體還給電腦；「改回這台電腦內建的翻譯模型」可以切回來。
+
+選擇記在 `script-opts/kandong_settings.conf`（伺服器設定在 `floattranslate.conf`）。播放中換模型要用「看懂」啟動；直接開 mpv 的話，選擇會在下次用「看懂」開時生效。
 
 ## 進階：自己開翻譯伺服器
 
@@ -48,7 +60,7 @@ bash server/start-whisper-server.sh                        # 只有看沒字幕�
 ```
 
 **伺服器放在區網另一台電腦**（例如用 Mac 跑模型、Windows 看片）：伺服器那台用 `KANDONG_LAN=1` 啟動（會強制 API key，key 存在 `~/.config/kandong/api-key`），
-播放器的 `floattranslate.conf` 改 `endpoint`、`asr_endpoint` 並填 `api_key`。只開在信任的區網，不要轉發到公網。
+播放器那台在右鍵 → 設定 → 翻譯模型與伺服器 →「連到其他翻譯伺服器」→「自己輸入網址…」填網址與 key（或手動改 `floattranslate.conf` 的 `endpoint`、`api_key`；語音辨識的 `asr_endpoint` 目前要手動改）。只開在信任的區網，不要轉發到公網。
 
 ## 操作
 
@@ -72,7 +84,7 @@ bash server/start-whisper-server.sh                        # 只有看沒字幕�
 ## 已知限制
 
 - 人名常被音譯（例如 Marcus → 馬庫斯），換大模型也一樣；之後會做譯名修正。
-- 「模型」選單目前只是預告；換模型＝把想用的模型放進 models（兩個都放時依記憶體自動挑）。
+- 設定選單（下載、換模型、連其他伺服器）在 Mac 實測過；Windows 版尚未在 Windows 實機跑過，遇到問題請回報。
 - 控制列展開時，字幕不會自動往上讓位（目前把字幕固定放在稍高的位置）。
 
 ## 從原始碼執行（Mac）
@@ -86,6 +98,8 @@ bash mac/kandong.sh                          # 自動開引擎＋開空視窗，
 設定裝在 `~/.config/kandong/mpv/`，不動你原本的 mpv 設定。程式結構：
 
 - `scripts/floattranslate.lua`：翻譯、聽寫、快取、雙語顯示（mpv Lua 腳本；`floattranslate` 是內部代號）
+- `scripts/kandong_settings.lua`：設定選單「翻譯模型與伺服器」（下載、換模型、連其他伺服器）；換模型時寫要求檔給啟動器，由啟動器重開引擎
+- `tests/`：`test_settings_menu.py`（設定選單無頭測試）、`check_catalog.py`（四處模型清單一致）
 - `ui/`：介面（[uosc](https://github.com/tomasklaen/uosc) 設定、右鍵選單、台灣繁中介面文字）
 - `server/`：翻譯與語音辨識伺服器啟動腳本
 - `packaging/`：產生下載包（含 Windows 啟動器 `packaging/windows/`）

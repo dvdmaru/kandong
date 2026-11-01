@@ -547,7 +547,9 @@ local function on_translate_done(idx, file_key, tgt, err)
     if err then
         state.consecutive_failures = state.consecutive_failures + 1
         msg.warn(("cue %d 翻譯失敗（連續 %d 次）：%s"):format(idx, state.consecutive_failures, err))
-        if state.consecutive_failures >= opts.max_consecutive_failures then
+        if state.engine_paused then
+            -- 換模型中：引擎正在重開，失敗是預期的；等設定選單通知就緒再繼續
+        elseif state.consecutive_failures >= opts.max_consecutive_failures then
             state.cooldown_until = mp.get_time() + opts.failure_cooldown
             osd(("翻譯伺服器連線失敗，%d 秒後重試（檢查 %s）"):format(
                 opts.failure_cooldown, opts.endpoint), 6)
@@ -599,7 +601,7 @@ local function realtime_translate(norm, src)
         if err then
             state.consecutive_failures = state.consecutive_failures + 1
             msg.warn("即時翻譯失敗：" .. err)
-            if state.consecutive_failures >= opts.max_consecutive_failures then
+            if not state.engine_paused and state.consecutive_failures >= opts.max_consecutive_failures then
                 state.cooldown_until = mp.get_time() + opts.failure_cooldown
                 osd("翻譯伺服器連線失敗，暫停重試", 5)
             end
@@ -1214,5 +1216,33 @@ mp.add_key_binding("-", "ft-sub-smaller", function()
     state.font_scale = math.max(0.5, state.font_scale - 0.1)
     apply_font_scale()
 end, { repeatable = true })
+
+-- ===== 設定選單（kandong_settings.lua）送來的通知 =====
+
+-- 換模型期間引擎重開，暫停送翻譯，免得一直報「連線失敗」
+mp.register_script_message("ft-engine-pause", function()
+    state.engine_paused = true
+    state.cooldown_until = mp.get_time() + 600
+end)
+
+mp.register_script_message("ft-engine-ready", function()
+    state.engine_paused = false
+    state.consecutive_failures = 0
+    state.cooldown_until = 0
+    schedule_worker()
+end)
+
+-- 改連其他翻譯伺服器（設定選單已實際測過一句才送來）
+mp.register_script_message("ft-server-changed", function(endpoint, model, api_key)
+    if not endpoint or endpoint == "" then return end
+    opts.endpoint = endpoint
+    opts.model = model or opts.model
+    opts.api_key = api_key or ""
+    state.engine_paused = false
+    state.consecutive_failures = 0
+    state.cooldown_until = 0
+    msg.info("翻譯伺服器改為 " .. opts.endpoint .. "（模型 " .. opts.model .. "）")
+    schedule_worker()
+end)
 
 msg.info("看懂 KanDong 已載入。Ctrl+t 翻譯開關｜←→ 進退5秒｜1–5 倍速 0.5x/1x/1.5x/2x/3x｜A/D 減/加速10%、S 回1x｜↑↓ 音量±5｜-/= 字幕縮放。endpoint=" .. opts.endpoint)

@@ -21,6 +21,9 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${2:-${REPO}/dist}"
 VERSION="$(cat "${REPO}/VERSION")"
 
+# 模型清單寫在四個地方（設定選單、兩支一鍵下載、models 說明），打包前確認一致
+python3 "${REPO}/tests/check_catalog.py" >/dev/null || { echo "模型清單四處不一致，先跑 python3 tests/check_catalog.py 看哪裡不同"; exit 1; }
+
 for f in mpv.exe mpv.com ffmpeg.exe vulkan-1.dll; do
   [ -f "${WIN_BIN}/${f}" ] || { echo "缺 ${WIN_BIN}/${f}"; exit 1; }
 done
@@ -57,8 +60,8 @@ cp "${REPO}/ui/"*.conf "${REPO}/ui/uosc-zh-TW.json" "${REPO}/ui/install-uosc.sh"
 mkdir -p "${WORK}/ui-win/vendor" && cp "${WORK}/vendor/uosc.zip" "${WORK}/ui-win/vendor/"
 bash "${WORK}/ui-win/install-uosc.sh" "${W}/portable_config" >/dev/null
 rm -f "${W}/portable_config/scripts/uosc/bin/ziggy-darwin" "${W}/portable_config/scripts/uosc/bin/ziggy-linux"
-cp "${REPO}/scripts/floattranslate.lua" "${W}/portable_config/scripts/"
-cp "${REPO}/script-opts/floattranslate.conf" "${W}/portable_config/script-opts/"
+cp "${REPO}/scripts/floattranslate.lua" "${REPO}/scripts/kandong_settings.lua" "${W}/portable_config/scripts/"
+cp "${REPO}/script-opts/floattranslate.conf" "${REPO}/script-opts/kandong_settings.conf" "${W}/portable_config/script-opts/"
 
 # 內附引擎（固定版本、驗 SHA256）：llama.cpp b10204（與 Mac 實測同版）Vulkan 版＋whisper.cpp b5454
 fetch_engine() {  # $1 url  $2 sha256  $3 解壓目錄
