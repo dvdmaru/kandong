@@ -6,7 +6,9 @@ set -u
 
 PKG="$(cd "$(dirname "$0")/.." && pwd)"
 MODELS="${KANDONG_MODELS_DIR:-${PKG}/models}"
-mkdir -p "${MODELS}"
+# 語音辨識模型與其他工具（Echoic 線下版）共用，放共用資料夾；約定見 models-catalog.json
+SHARED="${KANDONG_SHARED_MODELS_DIR:-${HOME}/.cache/twtools/models}"
+mkdir -p "${MODELS}" "${SHARED}"
 
 # MODELS-BEGIN（編號｜檔名｜網址｜SHA256｜大小 bytes｜說明）
 CATALOG=(
@@ -19,13 +21,26 @@ CATALOG=(
 get_one() {  # $1＝catalog 一行
   local key file url sha size desc dest part got free_kb
   IFS='|' read -r key file url sha size desc <<< "$1"
-  dest="${MODELS}/${file}"
+  case "${file}" in
+    ggml-large-v3-turbo*)
+      dest="${SHARED}/${file}"
+      for have in "${MODELS}" "${SHARED}"; do
+        for f in ggml-large-v3-turbo-q5_0.bin ggml-large-v3-turbo.bin; do
+          if [ -f "${have}/${f}" ]; then echo "已經有語音辨識模型（${have}/${f}），略過。"; return 0; fi
+        done
+      done ;;
+    *) dest="${MODELS}/${file}" ;;
+  esac
   part="${dest}.part"
   if [ -f "${dest}" ]; then
     echo "已經有 ${file}，略過。"
     return 0
   fi
-  free_kb="$(df -k "${MODELS}" | awk 'NR == 2 {print $4}')"
+  if [ -f "${part}" ] && [ $(( $(date +%s) - $(stat -f %m "${part}") )) -lt 60 ]; then
+    echo "另一個程式正在下載 ${file}（${part} 一分鐘內有變動），等它下載完再試。"
+    return 1
+  fi
+  free_kb="$(df -k "$(dirname "${dest}")" | awk 'NR == 2 {print $4}')"
   if [ -n "${free_kb}" ] && [ "${free_kb}" -lt $(( size / 1024 + 512 * 1024 )) ]; then
     echo "磁碟空間不夠：${file} 需要約 $(( size / 1073741824 + 1 )) GB。"
     return 1

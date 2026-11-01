@@ -23,6 +23,8 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH}"
 PKG="$(cd "$(dirname "$0")/.." && pwd)"
 CONFIG="${KANDONG_CONFIG_DIR:-${HOME}/.config/kandong/mpv}"
 MODELS="${KANDONG_MODELS_DIR:-${PKG}/models}"
+# 與其他工具（Echoic 線下版）共用的模型資料夾；約定見 models-catalog.json
+SHARED="${KANDONG_SHARED_MODELS_DIR:-${HOME}/.cache/twtools/models}"
 LOGS="${KANDONG_LOG_DIR:-${HOME}/Library/Logs/KanDong}"
 TPORT="${KANDONG_TRANSLATE_PORT:-8080}"
 APORT="${KANDONG_ASR_PORT:-8090}"
@@ -64,7 +66,7 @@ KCONF="${CONFIG}/script-opts/kandong_settings.conf"
 if [ ! -f "${KCONF}" ]; then
   cp "${PKG}/script-opts/kandong_settings.conf" "${KCONF}"
 fi
-mkdir -p "${MODELS}" "${LOGS}"
+mkdir -p "${MODELS}" "${LOGS}" "${SHARED}"
 rm -f "${REQ}" "${REQ}.processing"
 
 # ── 2. 本機引擎 ──
@@ -150,9 +152,20 @@ start_engine() {  # $1 模型檔 → 0＝就緒（失敗時 ENGINE_ERROR 是白�
   return 1
 }
 
+asr_model() {  # 看懂偏好 q5_0；共用資料夾裡別的工具下載的未量化版也能用
+  local f d
+  for f in ggml-large-v3-turbo-q5_0.bin ggml-large-v3-turbo.bin; do
+    for d in "${MODELS}" "${SHARED}"; do
+      if [ -f "${d}/${f}" ]; then echo "${d}/${f}"; return 0; fi
+    done
+  done
+  return 0
+}
+
 start_asr() {  # 有語音辨識模型、8090 沒人用、這次還沒開過 → 開 whisper-server
-  local m="${MODELS}/ggml-large-v3-turbo-q5_0.bin"
-  if [ -n "${ASR_PID}" ] || [ ! -f "${m}" ] || port_open "${APORT}"; then return 0; fi
+  local m
+  m="$(asr_model)"
+  if [ -n "${ASR_PID}" ] || [ -z "${m}" ] || port_open "${APORT}"; then return 0; fi
   if ! command -v whisper-server >/dev/null 2>&1; then return 0; fi
   whisper-server -m "${m}" --host 127.0.0.1 --port "${APORT}" > "${LOGS}/asr-engine.log" 2>&1 &
   ASR_PID=$!
@@ -270,6 +283,7 @@ MPV_ARGS=(
   "--script-opts-append=kandong_settings-models_dir=${MODELS}"
   "--script-opts-append=kandong_settings-control_dir=${LOGS}"
   "--script-opts-append=kandong_settings-engine_port=${TPORT}"
+  "--script-opts-append=kandong_settings-shared_dir=${SHARED}"
 )
 if [ $# -eq 0 ]; then
   MPV_ARGS+=(--idle=yes --force-window=yes)

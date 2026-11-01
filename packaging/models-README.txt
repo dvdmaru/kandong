@@ -24,6 +24,10 @@ B. 自己下載（想先確認來源、或用自己的下載工具）
      SHA256：dc5f44fcf1fa496ee7ad725982c0c8c553a4de00259b53af84c4b89fb0c06699
 
    語音辨識模型（約 574MB，只有看「沒字幕的影片」才需要）
+   ※ 這一顆跟其他工具（例如 Echoic 線下版）共用，請放在共用資料夾，不是這個 models 資料夾：
+      Windows：%USERPROFILE%\.cache\twtools\models\
+      Mac    ：~/.cache/twtools/models/
+      共用資料夾裡已經有別的工具下載的 ggml-large-v3-turbo.bin（未量化版）也能直接用，不必再下載。
      檔名：ggml-large-v3-turbo-q5_0.bin
      下載：https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin
      SHA256：394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2

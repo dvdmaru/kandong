@@ -26,14 +26,41 @@ def block(text):
     return m.group(1)
 
 
-def from_lua(text):
-    out = {}
+def lua_entries(text):
+    out = []
     for ent in re.findall(r"\{\s*file\s*=.*?size\s*=\s*\d+\s*\}", block(text), re.S):
-        f = re.search(r'file\s*=\s*"([^"]+)"', ent).group(1)
-        out[f] = (re.search(r'url\s*=\s*"([^"]+)"', ent).group(1),
-                  re.search(r'sha\s*=\s*"([^"]+)"', ent).group(1),
-                  int(re.search(r"size\s*=\s*(\d+)", ent).group(1)))
+        out.append({
+            "file": re.search(r'file\s*=\s*"([^"]+)"', ent).group(1),
+            "url": re.search(r'url\s*=\s*"([^"]+)"', ent).group(1),
+            "sha": re.search(r'sha\s*=\s*"([^"]+)"', ent).group(1),
+            "size": int(re.search(r"size\s*=\s*(\d+)", ent).group(1)),
+            "hidden": re.search(r"hidden\s*=\s*true", ent) is not None,
+            "shared": re.search(r"shared\s*=\s*true", ent) is not None,
+        })
     return out
+
+
+def from_lua(text):
+    """四處比對只看「會提供下載」的模型（hidden＝只認不下載，其他三處沒有）。"""
+    return {e["file"]: (e["url"], e["sha"], e["size"]) for e in lua_entries(text) if not e["hidden"]}
+
+
+def check_shared(lua_text):
+    """共用模型：repo 根目錄 models-catalog.json（與 Echoic 線下版的約定）要跟 Lua 裡 shared=true 的條目一字不差。"""
+    import json
+    cat = json.load(open(os.path.join(REPO, "models-catalog.json"), encoding="utf-8"))
+    lua = {e["file"]: e for e in lua_entries(lua_text) if e["shared"]}
+    problems = []
+    jfiles = {m["file"] for m in cat["models"]}
+    if jfiles != set(lua):
+        problems.append("models-catalog.json 的檔名 %s ≠ Lua 共用模型 %s" % (sorted(jfiles), sorted(lua)))
+    for m in cat["models"]:
+        e = lua.get(m["file"])
+        if e and (e["url"], e["sha"], e["size"]) != (m["url"], m["sha256"], m["size"]):
+            problems.append("models-catalog.json 與 Lua 的 %s 網址／SHA256／大小不同" % m["file"])
+    if cat.get("shared_dir", {}).get("mac") != "~/.cache/twtools/models":
+        problems.append("models-catalog.json 的 shared_dir.mac 不是 ~/.cache/twtools/models")
+    return problems
 
 
 def from_sh(text):
@@ -103,11 +130,11 @@ def main():
         caught = compare(sources)
         print("陽性對照：" + ("抓到 " + caught[0] if caught else "沒抓到（檢查器壞了）"))
         return 0 if caught else 1
-    problems = compare(sources)
+    problems = compare(sources) + check_shared(read("scripts/kandong_settings.lua"))
     for p in problems:
         print("FAIL：" + p)
     if not problems:
-        print("四處模型清單一致")
+        print("四處模型清單一致；共用模型與 models-catalog.json 一致")
     return 1 if problems else 0
 
 

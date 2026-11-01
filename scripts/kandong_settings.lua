@@ -26,6 +26,7 @@ local o = {
     control_dir = "",  -- 啟動器帶進來；Windows 沒帶時用 mpv.exe 旁的 logs
     model_path = "",   -- 使用者選的翻譯模型（空白＝依記憶體自動選）
     engine_port = 8080, -- 本機翻譯引擎的埠（啟動器帶進來）
+    shared_dir = "",    -- 與其他工具共用的模型資料夾（空白＝~/.cache/twtools/models；見 models-catalog.json）
     catalog_file = "", -- 測試用：用另一份 JSON 取代內建模型清單
 }
 options.read_options(o, "kandong_settings")
@@ -47,11 +48,19 @@ local CATALOG = {
       url = "https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF/resolve/main/Hy-MT2-1.8B-Q4_K_M.gguf",
       sha = "dc5f44fcf1fa496ee7ad725982c0c8c553a4de00259b53af84c4b89fb0c06699", size = 1133080448 },
     { file = "ggml-large-v3-turbo-q5_0.bin", kind = "asr", label = "語音辨識模型（Whisper）",
-      note = "只有看「沒字幕的影片」才需要",
+      note = "只有看「沒字幕的影片」才需要", family = "whisper-large-v3-turbo", shared = true,
       url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin",
       sha = "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2", size = 574041195 },
+    -- 只認不下載：其他工具（Echoic 線下版）下載的未量化版，放在共用資料夾就直接用，不必再下載 q5_0
+    { file = "ggml-large-v3-turbo.bin", kind = "asr", label = "語音辨識模型（Whisper，未量化）",
+      note = "", family = "whisper-large-v3-turbo", shared = true, hidden = true,
+      url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo.bin",
+      sha = "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69", size = 1624555275 },
 }
 -- MODELS-END
+-- 共用模型（shared = true）另外要跟 repo 根目錄的 models-catalog.json 一致（與 Echoic 線下版共用的約定，
+-- 兩個 repo 各放一份）：檔名＋SHA256 相同＝同一顆；下載先寫 .part、驗完再改名；
+-- .part 60 秒內有在變大＝別的程式正在下載，不重開一份。
 
 local platform = mp.get_property("platform")
     or (package.config:sub(1, 1) == "\\" and "windows" or "darwin")
@@ -265,6 +274,43 @@ end
 
 local function home_dir() return os.getenv("HOME") or os.getenv("USERPROFILE") or "" end
 
+-- 與其他工具共用的模型資料夾：Mac ~/.cache/twtools/models、Windows %USERPROFILE%\.cache\twtools\models
+local function shared_models_dir()
+    if o.shared_dir ~= "" then return o.shared_dir end
+    local home = is_windows and (os.getenv("USERPROFILE") or home_dir()) or home_dir()
+    if home == "" then return "" end
+    return join(home, ".cache/twtools/models")
+end
+
+local function ensure_dir(dir)
+    if dir == "" or dir_exists(dir) then return dir ~= "" end
+    local args = is_windows and { "cmd", "/d", "/c", "mkdir", dir } or { "mkdir", "-p", dir }
+    mp.command_native({ name = "subprocess", args = args, playback_only = false })
+    return dir_exists(dir)
+end
+
+-- 下載目的地：共用模型放共用資料夾，看懂自己的模型放 models
+local function dest_dir(e)
+    if e.shared then
+        local d = shared_models_dir()
+        if ensure_dir(d) then return d end
+    end
+    return o.models_dir
+end
+
+-- 這顆（或同家族的另一顆）已經在 models 或共用資料夾 → 回傳路徑
+local function have_model(e)
+    for _, c in ipairs(CATALOG) do
+        if c.file == e.file or (e.family and c.family == e.family) then
+            for _, d in ipairs({ o.models_dir, shared_models_dir() }) do
+                local p = d ~= "" and join(d, c.file)
+                if p and file_size(p) then return p end
+            end
+        end
+    end
+    return nil
+end
+
 local function scan_dir(dir, depth, origin, out, seen)
     if not dir_exists(dir) then return end
     for _, f in ipairs(utils.readdir(dir, "files") or {}) do
@@ -290,6 +336,7 @@ local function find_models()
     local home = home_dir()
     if home ~= "" then
         scan_dir(join(home, ".cache/kandong/models"), 0, "cache", out, seen)
+        scan_dir(shared_models_dir(), 0, "shared", out, seen)
         scan_dir(join(home, ".lmstudio/models"), 3, "lmstudio", out, seen)
         scan_dir(join(home, ".cache/lm-studio/models"), 3, "lmstudio", out, seen)
     end
@@ -379,7 +426,8 @@ local function status_line(st, server)
 end
 
 local function download_hint(e)
-    local dest = o.models_dir ~= "" and join(o.models_dir, e.file)
+    local dir = dest_dir(e)
+    local dest = dir ~= "" and join(dir, e.file)
     if dl and dl.entry.file == e.file then
         if dl.phase == "verify" then return "檢查檔案中…" end
         local got = file_size(dl.part) or 0
@@ -427,8 +475,7 @@ build_menu = function()
     add({ title = "下載模型（Hugging Face 官方，會檢查檔案是否完整）", selectable = false, bold = true })
     local any_dl = false
     for _, e in ipairs(CATALOG) do
-        local dest = o.models_dir ~= "" and join(o.models_dir, e.file)
-        if not (dest and file_size(dest)) then
+        if not e.hidden and not have_model(e) then
             any_dl = true
             add({ title = "下載 " .. e.label, hint = download_hint(e), keep_open = true,
                   value = act("download", e.file) })
@@ -554,6 +601,7 @@ end
 -- ===== 下載 =====
 
 local dl_timer = nil
+local recently_ours = {} -- 自己剛停掉的 .part（60 秒內重新開始不要誤判成別的程式在下載）
 
 local function hash_args(path)
     if is_windows then return { "certutil", "-hashfile", path, "SHA256" } end
@@ -628,12 +676,18 @@ local function start_download(file)
     local e = catalog_by_file(file)
     if not e then return end
     if dl then return osd("正在下載 " .. dl.entry.label .. "，一次下載一個", 3) end
-    if o.models_dir == "" or not dir_exists(o.models_dir) then
+    if have_model(e) then return osd("已經有 " .. e.label, 3) end
+    local dir = dest_dir(e)
+    if dir == "" or not dir_exists(dir) then
         return osd("找不到模型資料夾（請用「看懂」啟動，或在 kandong_settings.conf 設 models_dir）", 6)
     end
-    local dest = join(o.models_dir, e.file)
-    if file_size(dest) then return osd("已經有 " .. e.label, 3) end
+    local dest = join(dir, e.file)
     local part = dest .. ".part"
+    -- .part 60 秒內有變動＝別的程式（例如 Echoic 線下版）正在下載同一個檔：不重開一份
+    local pinfo = utils.file_info(part)
+    if pinfo and pinfo.mtime and os.time() - pinfo.mtime < 60 and not recently_ours[part] then
+        return osd("另一個程式正在下載這個檔（" .. e.label .. "），等它下載完就能用", 6)
+    end
     dl = { entry = e, part = part, dest = dest, phase = "download", t0 = mp.get_time(),
            last_size = file_size(part) or 0, last_t = mp.get_time(), last_pct_note = -1 }
     osd("開始下載 " .. e.label .. "（" .. fmt_size(e.size) .. "；可以繼續看片，進度在這個選單）", 5)
@@ -672,6 +726,7 @@ end
 local function cancel_download()
     if not dl then return end
     if dl.id then mp.abort_async_command(dl.id) end
+    recently_ours[dl.part] = true
     dl_done("已停止下載。下次點同一個模型會從中斷的地方接著下載", 5)
 end
 

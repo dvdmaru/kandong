@@ -12,6 +12,8 @@ try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 
 $Root = Split-Path -Parent $PSScriptRoot
 $Models = Join-Path $Root 'models'
+# 與其他工具（Echoic 線下版）共用的模型資料夾；約定見 models-catalog.json
+$Shared = Join-Path $env:USERPROFILE '.cache\twtools\models'
 $Logs = Join-Path $Root 'logs'
 $Config = Join-Path $Root 'portable_config'
 $TranslatePort = 8080
@@ -188,9 +190,20 @@ function Start-Engine([string]$model) {
 }
 
 # 語音辨識：有模型、8090 沒人用、這次還沒開過才開
+# 看懂偏好 q5_0；共用資料夾裡別的工具下載的未量化版也能用
+function Get-AsrModel {
+    foreach ($f in @('ggml-large-v3-turbo-q5_0.bin', 'ggml-large-v3-turbo.bin')) {
+        foreach ($d in @($Models, $Shared)) {
+            $p = Join-Path $d $f
+            if (Test-Path -LiteralPath $p) { return $p }
+        }
+    }
+    return ''
+}
+
 function Start-Asr {
-    $asrModel = Join-Path $Models 'ggml-large-v3-turbo-q5_0.bin'
-    if (($script:Asr -and -not $script:Asr.HasExited) -or -not (Test-Path -LiteralPath $asrModel) -or (Test-Port $AsrPort)) { return }
+    $asrModel = Get-AsrModel
+    if (($script:Asr -and -not $script:Asr.HasExited) -or $asrModel -eq '' -or (Test-Port $AsrPort)) { return }
     New-Item -ItemType Directory -Force -Path $Logs | Out-Null
     $whisper = Join-Path $Root 'engine\whisper\whisper-server.exe'
     $asrArgs = @('-m', (Quote $asrModel), '--host', '127.0.0.1', '--port', "$AsrPort")
@@ -289,6 +302,7 @@ if ($missing) {
 }
 
 New-Item -ItemType Directory -Force -Path $Models, $Logs | Out-Null
+try { New-Item -ItemType Directory -Force -Path $Shared | Out-Null } catch {}
 Remove-Item -LiteralPath $ReqFile, "$ReqFile.processing" -Force -ErrorAction SilentlyContinue
 Stop-Leftovers
 if (-not (Test-Path -LiteralPath $KConf)) {
@@ -343,7 +357,8 @@ $mpv = Join-Path $Root 'mpv.exe'
 $mpvArgs = @(
     (Quote "--script-opts-append=kandong_settings-models_dir=$Models"),
     (Quote "--script-opts-append=kandong_settings-control_dir=$Logs"),
-    "--script-opts-append=kandong_settings-engine_port=$TranslatePort"
+    "--script-opts-append=kandong_settings-engine_port=$TranslatePort",
+    (Quote "--script-opts-append=kandong_settings-shared_dir=$Shared")
 )
 if ($args.Count -gt 0) {
     foreach ($a in $args) { $mpvArgs += (Quote $a) }

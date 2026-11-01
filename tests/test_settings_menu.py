@@ -175,8 +175,13 @@ def main():
         {"file": "slow.gguf", "kind": "translate", "label": "慢速測試", "note": "",
          "url": base + "slow", "sha": sha, "size": len(payload)},
         {"file": "ggml-large-v3-turbo-q5_0.bin", "kind": "asr", "label": "語音辨識模型（Whisper）", "note": "",
+         "family": "whisper-large-v3-turbo", "shared": True,
          "url": base + "asr", "sha": sha, "size": len(payload)},
+        {"file": "ggml-large-v3-turbo.bin", "kind": "asr", "label": "語音辨識模型（Whisper，未量化）", "note": "",
+         "family": "whisper-large-v3-turbo", "shared": True, "hidden": True,
+         "url": base + "asr-full", "sha": sha, "size": len(payload)},
     ]
+    shared = os.path.join(home, ".cache/twtools/models")  # 與 Echoic 線下版共用的資料夾（HOME 指到測試目錄）
     cat_path = os.path.join(tmp, "catalog.json")
     json.dump(catalog, open(cat_path, "w"), ensure_ascii=False)
 
@@ -334,6 +339,8 @@ def main():
         os.remove(m18)
         with open(m18 + ".part", "wb") as f:
             f.write(payload[: len(payload) // 2])
+        old = time.time() - 120  # 上次中斷留下的 .part（兩分鐘前），不是別的程式正在寫
+        os.utime(m18 + ".part", (old, old))
         write_status(id="y", state="none", model="")
         open(tlog, "w").close()
         action("download", "Hy-MT2-1.8B-Q4_K_M.gguf")
@@ -358,12 +365,46 @@ def main():
         check(os.path.getsize(slowp + ".part") == s1 and 0 < s1 < len(payload), "停止後不再長大、留著續傳")
         check(not os.path.exists(slowp), "沒有被當成完成")
 
-        print("== 9. 語音辨識模型下載完 → 請啟動器開語音辨識")
+        print("== 9. 語音辨識模型（共用模型）下載到共用資料夾 → 請啟動器開語音辨識")
+        asr_shared = os.path.join(shared, "ggml-large-v3-turbo-q5_0.bin")
         action("download", "ggml-large-v3-turbo-q5_0.bin")
         req = wait_for(lambda: read_kv(request), 20)
-        check(req and req.get("action") == "asr", "送出 asr 要求")
+        check(req and req.get("action") == "asr" and req.get("model") == asr_shared, "下載到共用資料夾並送出 asr 要求")
+        check(os.path.exists(asr_shared) and not os.path.exists(os.path.join(models, "ggml-large-v3-turbo-q5_0.bin")),
+              "共用模型不放 models、放 ~/.cache/twtools/models")
         if os.path.exists(request):
             os.remove(request)
+
+        print("== 9b. 共用資料夾已有另一個工具下載的未量化版 → 不再提供語音辨識模型下載")
+        os.remove(asr_shared)
+        with open(os.path.join(shared, "ggml-large-v3-turbo.bin"), "wb") as f:
+            f.write(b"\0" * 1000)
+        os.remove(os.path.join(out, "open-menu.json"))
+        ipc.cmd("script-binding", "kandong_settings/open-settings")
+        m9 = wait_for(menu, 5)
+        check(m9 and not any("語音辨識" in t for t in titles(m9)), "同家族另一顆在共用資料夾 → 下載清單沒有語音辨識模型")
+        os.remove(os.path.join(shared, "ggml-large-v3-turbo.bin"))
+
+        print("== 9c. 共用資料夾的 .part 一分鐘內有變動＝別的程式在下載 → 不重開一份")
+        busy = os.path.join(shared, "ggml-large-v3-turbo-q5_0.bin.part")
+        with open(busy, "wb") as f:
+            f.write(b"\0" * 1000)
+        action("download", "ggml-large-v3-turbo-q5_0.bin")
+        time.sleep(2)
+        check(os.path.getsize(busy) == 1000 and not os.path.exists(request), "沒有接手下載、沒送要求")
+        log9 = open(os.path.join(out, "mpv.log"), encoding="utf-8", errors="replace").read()
+        check("另一個程式正在下載這個檔" in log9, "提示使用者另一個程式正在下載")
+        os.remove(busy)
+
+        print("== 9d. 共用資料夾裡的 .gguf 也列進翻譯模型")
+        sg = os.path.join(shared, "shared-translator.gguf")
+        with open(sg, "wb") as f:
+            f.write(b"\0" * 1000)
+        os.remove(os.path.join(out, "open-menu.json"))
+        ipc.cmd("script-binding", "kandong_settings/open-settings")
+        m9 = wait_for(menu, 5)
+        check(m9 and "shared-translator" in titles(m9), "共用資料夾的 .gguf 出現在清單")
+        os.remove(sg)
 
         print("== 10. 連到其他翻譯伺服器（假 Ollama）")
         for f in ("open-menu.json",):

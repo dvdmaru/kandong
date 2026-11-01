@@ -46,6 +46,11 @@
 - **自己的 GGUF 模型**：放進 `models` 資料夾就會出現在清單；放在別處就用「使用其他位置的模型檔…」貼上路徑。看懂的翻譯指令是為 Hy-MT2 調的，其他模型翻得好不好要自己試。
 - **已經在用 Ollama、LM Studio 或區網另一台電腦的翻譯服務**：「連到其他翻譯伺服器」，選好模型後會先實際翻一句測試，成功才改用，同時關掉本機引擎把記憶體還給電腦；「改回這台電腦內建的翻譯模型」可以切回來。
 
+**跟其他工具共用模型**：語音辨識模型（Whisper large-v3-turbo）放在共用資料夾 `~/.cache/twtools/models/`（Windows：`%USERPROFILE%\.cache\twtools\models\`），
+跟 Echoic 線下版共用，裝過其中一個就不必再下載。看懂下載的是 q5_0（約 574MB），共用資料夾裡有未量化版（約 1.6GB）也直接用。
+共用的模型清單與規則在 [`models-catalog.json`](models-catalog.json)（兩個工具各放一份，`tests/check_catalog.py` 會比對）：檔名＋SHA256 相同＝同一顆；
+下載先寫 `.part`、驗完 SHA256 再改名；`.part` 一分鐘內有變動代表另一個程式正在下載，不會重開一份。
+
 選擇記在 `script-opts/kandong_settings.conf`（伺服器設定在 `floattranslate.conf`）。播放中換模型要用「看懂」啟動；直接開 mpv 的話，選擇會在下次用「看懂」開時生效。
 
 ## 進階：自己開翻譯伺服器

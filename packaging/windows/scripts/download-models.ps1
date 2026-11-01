@@ -8,7 +8,9 @@ try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 
 $Root = Split-Path -Parent $PSScriptRoot
 $Models = Join-Path $Root 'models'
-New-Item -ItemType Directory -Force -Path $Models | Out-Null
+# 語音辨識模型與其他工具（Echoic 線下版）共用，放共用資料夾；約定見 models-catalog.json
+$Shared = Join-Path $env:USERPROFILE '.cache\twtools\models'
+New-Item -ItemType Directory -Force -Path $Models, $Shared | Out-Null
 
 # MODELS-BEGIN（名稱｜檔名｜網址｜SHA256｜大小 bytes）
 $Catalog = @(
@@ -28,14 +30,28 @@ $Catalog = @(
 # MODELS-END
 
 function Get-One($m) {
-    $dest = Join-Path $Models $m.File
-    if (Test-Path $dest) {
+    $dir = $Models
+    if ($m.File -like 'ggml-large-v3-turbo*') {
+        $dir = $Shared
+        foreach ($d in @($Models, $Shared)) {
+            foreach ($f in @('ggml-large-v3-turbo-q5_0.bin', 'ggml-large-v3-turbo.bin')) {
+                $p = Join-Path $d $f
+                if (Test-Path -LiteralPath $p) { Write-Host "已經有語音辨識模型（$p），略過。"; return $true }
+            }
+        }
+    }
+    $dest = Join-Path $dir $m.File
+    if (Test-Path -LiteralPath $dest) {
         Write-Host "已經有 $($m.File)，略過。"
         return $true
     }
     $part = "$dest.part"
+    if ((Test-Path -LiteralPath $part) -and ((Get-Date) - (Get-Item -LiteralPath $part).LastWriteTime).TotalSeconds -lt 60) {
+        Write-Host "另一個程式正在下載 $($m.File)（一分鐘內有變動），等它下載完再試。"
+        return $false
+    }
     try {
-        $drive = Get-PSDrive -Name ((Split-Path -Qualifier $Models).TrimEnd(':'))
+        $drive = Get-PSDrive -Name ((Split-Path -Qualifier $dir).TrimEnd(':'))
         if ($drive.Free -lt ($m.Size + 500MB)) {
             Write-Host ("磁碟空間不夠：需要約 {0:N1} GB，現在只剩 {1:N1} GB。" -f ($m.Size / 1GB), ($drive.Free / 1GB))
             return $false
