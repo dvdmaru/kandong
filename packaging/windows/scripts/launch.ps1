@@ -27,6 +27,7 @@ $script:EngineModel = ''
 $script:EngineError = ''
 $script:Asr = $null
 $script:State = 'none'
+$script:LastRequestId = ''
 
 function Pause-Exit([int]$code) {
     Write-Host ''
@@ -78,9 +79,10 @@ function Write-Status([string]$id, [string]$state, [string]$model, [string]$err)
     for ($i = 0; $i -lt 10; $i++) {
         try {
             [IO.File]::WriteAllText($tmp, $text, $Utf8NoBom)
-            Move-Item -LiteralPath $tmp -Destination $StatusFile -Force
+            if ([IO.File]::Exists($StatusFile)) { [IO.File]::Replace($tmp, $StatusFile, $null) }
+            else { [IO.File]::Move($tmp, $StatusFile) }
             return
-        } catch { Start-Sleep -Milliseconds 100 }
+        } catch { Start-Sleep -Milliseconds 100 }  # 設定選單剛好在讀：等一下再換
     }
     try { [IO.File]::WriteAllText($StatusFile, $text, $Utf8NoBom) } catch {}
 }
@@ -102,19 +104,42 @@ function Get-AutoModel {
 
 # 設定選單選過的優先；檔案不在了就退回自動選
 function Get-ChosenModel {
-    $p = Get-ConfValue $KConf 'model_path'
-    if ($p -ne '' -and -not [IO.Path]::IsPathRooted($p)) { $p = Join-Path $Models $p }
-    if ($p -ne '' -and (Test-Path -LiteralPath $p)) { return $p }
+    $p = (Get-ConfValue $KConf 'model_path').Trim().Trim('"')
+    try {
+        if ($p -ne '' -and -not [IO.Path]::IsPathRooted($p)) { $p = Join-Path $Models $p }
+        if ($p -ne '' -and (Test-Path -LiteralPath $p)) { return $p }
+    } catch {}  # 路徑裡有不合法字元：當作沒選
     return (Get-AutoModel)
 }
 
 function Stop-Engine {
+    $had = [bool]$script:Engine
     if ($script:Engine) {
         try { if (-not $script:Engine.HasExited) { Stop-Process -Id $script:Engine.Id -Force } } catch {}
         try { $script:Engine.WaitForExit(10000) | Out-Null } catch {}
     }
     $script:Engine = $null
     $script:EngineModel = ''
+    if (-not $had) { return }  # 8080 上若是別人的服務，不用等它關
+    for ($i = 0; $i -lt 20; $i++) {
+        if (-not (Test-Port $TranslatePort)) { break }
+        Start-Sleep -Milliseconds 250
+    }
+}
+
+# 上次「看懂」視窗被直接按 X 關掉時，隱藏的引擎不會跟著結束；開機前把留下來的收掉
+# （只收 KanDong\engine 底下的執行檔，不碰使用者自己開的其他服務）
+function Stop-Leftovers {
+    $engineDir = (Join-Path $Root 'engine') + '\'
+    try {
+        $procs = Get-CimInstance Win32_Process -Filter "Name='llama-server.exe' OR Name='whisper-server.exe'" -ErrorAction Stop
+        foreach ($p in $procs) {
+            if ($p.ExecutablePath -and $p.ExecutablePath.StartsWith($engineDir, [StringComparison]::OrdinalIgnoreCase)) {
+                Write-Host ("收掉上次留下的引擎：{0}（PID {1}）" -f $p.Name, $p.ProcessId)
+                try { Stop-Process -Id $p.ProcessId -Force } catch {}
+            }
+        }
+    } catch {}
     for ($i = 0; $i -lt 20; $i++) {
         if (-not (Test-Port $TranslatePort)) { break }
         Start-Sleep -Milliseconds 250
@@ -134,8 +159,13 @@ function Start-Engine([string]$model) {
     $engineArgs = @('-m', (Quote $model), '--host', '127.0.0.1', '--port', "$TranslatePort",
         '--alias', 'tencent/Hy-MT2-GGUF', '--ctx-size', '4096', '--parallel', '1', '-ngl', '99')
     Write-Host ("開啟翻譯引擎（模型：{0}；第一次載入約 10–60 秒）" -f (Split-Path -Leaf $model))
-    $proc = Start-Process -FilePath $llama -ArgumentList $engineArgs -WindowStyle Hidden -PassThru `
-        -RedirectStandardError $llamaLog -RedirectStandardOutput (Join-Path $Logs 'translate-engine-out.log')
+    try {
+        $proc = Start-Process -FilePath $llama -ArgumentList $engineArgs -WindowStyle Hidden -PassThru `
+            -RedirectStandardError $llamaLog -RedirectStandardOutput (Join-Path $Logs 'translate-engine-out.log')
+    } catch {
+        $script:EngineError = '翻譯引擎開不起來（engine 資料夾的檔案不見了，或被防毒軟體擋掉）：' + $_.Exception.Message
+        return $false
+    }
     $script:Engine = $proc
     for ($i = 0; $i -lt 240; $i++) {
         if ($proc.HasExited) { break }
@@ -160,13 +190,18 @@ function Start-Engine([string]$model) {
 # 語音辨識：有模型、8090 沒人用、這次還沒開過才開
 function Start-Asr {
     $asrModel = Join-Path $Models 'ggml-large-v3-turbo-q5_0.bin'
-    if ($script:Asr -or -not (Test-Path -LiteralPath $asrModel) -or (Test-Port $AsrPort)) { return }
+    if (($script:Asr -and -not $script:Asr.HasExited) -or -not (Test-Path -LiteralPath $asrModel) -or (Test-Port $AsrPort)) { return }
     New-Item -ItemType Directory -Force -Path $Logs | Out-Null
     $whisper = Join-Path $Root 'engine\whisper\whisper-server.exe'
     $asrArgs = @('-m', (Quote $asrModel), '--host', '127.0.0.1', '--port', "$AsrPort")
-    $script:Asr = Start-Process -FilePath $whisper -ArgumentList $asrArgs -WindowStyle Hidden -PassThru `
-        -RedirectStandardError (Join-Path $Logs 'asr-engine.log') -RedirectStandardOutput (Join-Path $Logs 'asr-engine-out.log')
-    Write-Host '語音辨識引擎已啟動（沒字幕的影片會用到）。'
+    try {
+        $script:Asr = Start-Process -FilePath $whisper -ArgumentList $asrArgs -WindowStyle Hidden -PassThru `
+            -RedirectStandardError (Join-Path $Logs 'asr-engine.log') -RedirectStandardOutput (Join-Path $Logs 'asr-engine-out.log')
+        Write-Host '語音辨識引擎已啟動（沒字幕的影片會用到）。'
+    } catch {
+        $script:Asr = $null
+        Write-Host ('語音辨識引擎開不起來：' + $_.Exception.Message)
+    }
 }
 
 function Stop-All {
@@ -177,15 +212,21 @@ function Stop-All {
 
 # 處理設定選單的一個要求（id／action／model 三行）
 function Invoke-Request {
+    $claimed = "$ReqFile.processing"
+    try {
+        if ([IO.File]::Exists($claimed)) { [IO.File]::Delete($claimed) }
+        [IO.File]::Move($ReqFile, $claimed)
+    } catch { return }  # 選單剛好在寫：下一輪再處理
     $text = ''
-    try { $text = [IO.File]::ReadAllText($ReqFile, [Text.Encoding]::UTF8) } catch { return }
-    Remove-Item -LiteralPath $ReqFile -Force -ErrorAction SilentlyContinue
+    try { $text = [IO.File]::ReadAllText($claimed, [Text.Encoding]::UTF8) } catch {}
+    try { [IO.File]::Delete($claimed) } catch {}
     $req = @{}
     foreach ($line in ($text -split "`r?`n")) {
         $i = $line.IndexOf('=')
         if ($i -gt 0) { $req[$line.Substring(0, $i)] = $line.Substring($i + 1) }
     }
     $id = [string]$req['id']
+    $script:LastRequestId = $id  # 出意外時外層用它回報，選單才不會一直等
     $action = [string]$req['action']
     $model = [string]$req['model']
     if ($action -eq 'switch') {
@@ -231,7 +272,10 @@ function Invoke-Request {
 Write-Host '看懂 KanDong 啟動中…'
 
 # 1) 從網路下載的 zip 解壓後，exe/dll 會帶「來自網際網路」標記，每次開都可能跳安全警告；先解除
-try { Get-ChildItem -Path $Root -Recurse -Include *.exe, *.dll | Unblock-File } catch {}
+try {
+    Get-ChildItem -LiteralPath $Root -Recurse -File |
+        Where-Object { $_.Extension -eq '.exe' -or $_.Extension -eq '.dll' } | Unblock-File
+} catch {}
 
 # 2) 翻譯與語音辨識引擎需要微軟 Visual C++ 執行階段（多數電腦已經有）
 $sys = [Environment]::GetFolderPath('System')
@@ -245,7 +289,8 @@ if ($missing) {
 }
 
 New-Item -ItemType Directory -Force -Path $Models, $Logs | Out-Null
-Remove-Item -LiteralPath $ReqFile -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $ReqFile, "$ReqFile.processing" -Force -ErrorAction SilentlyContinue
+Stop-Leftovers
 if (-not (Test-Path -LiteralPath $KConf)) {
     Set-ConfValue $KConf 'model_path' ''
 }
@@ -310,7 +355,11 @@ try {
     $player = Start-Process -FilePath $mpv -ArgumentList $mpvArgs -PassThru
     while (-not $player.HasExited) {
         if (Test-Path -LiteralPath $ReqFile) {
-            try { Invoke-Request } catch { Write-Host ("處理設定選單的要求時出錯：{0}" -f $_.Exception.Message) }
+            try { Invoke-Request } catch {
+                Write-Host ("處理設定選單的要求時出錯：{0}" -f $_.Exception.Message)
+                $script:State = if (Test-Port $TranslatePort) { $script:State } else { 'failed' }
+                Write-Status $script:LastRequestId $script:State $script:EngineModel $_.Exception.Message
+            }
         }
         Start-Sleep -Milliseconds 500
     }

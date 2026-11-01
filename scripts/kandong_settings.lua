@@ -64,7 +64,10 @@ local function osd(text, dur)
     msg.info(text) -- 畫面訊息不會進 mpv 的記錄檔，另外記一筆方便查問題
 end
 
-local function join(a, b) return utils.join_path(a, b) end
+local function join(a, b)
+    if is_windows then return (a:gsub("[/\\]+$", "")) .. "\\" .. b:gsub("/", "\\") end
+    return utils.join_path(a, b)
+end
 
 local function file_size(path)
     local info = path and path ~= "" and utils.file_info(path)
@@ -132,8 +135,10 @@ local function strip_quotes(s)
     return s
 end
 
-if o.models_dir == "" and is_windows then o.models_dir = expand("~~exe_dir/models") end
-if o.control_dir == "" and is_windows then o.control_dir = expand("~~exe_dir/logs") end
+if is_windows then
+    if not dir_exists(o.models_dir) then o.models_dir = expand("~~exe_dir/models") end
+    if not dir_exists(o.control_dir) then o.control_dir = expand("~~exe_dir/logs") end
+end
 
 if o.catalog_file ~= "" then
     local data = read_file(o.catalog_file)
@@ -161,7 +166,7 @@ local function conf_path(name) return expand("~~/script-opts/" .. name) end
 
 local function conf_read(name)
     local out = {}
-    local data = read_file(conf_path(name)) or ""
+    local data = (read_file(conf_path(name)) or ""):gsub("^\239\187\191", "")
     for line in data:gmatch("[^\r\n]+") do
         local k, v = line:match("^([%w_%-]+)=(.*)$")
         if k then out[k] = v end -- 同一個 key 出現多次時後面的算數（與 mpv、啟動器一致）
@@ -172,7 +177,7 @@ end
 -- updates：{ {key, value}, ... }；同 key 每一行都改掉，沒有就加在檔尾；其他行原樣保留
 local function conf_write(name, updates)
     local path = conf_path(name)
-    local data = read_file(path) or ""
+    local data = (read_file(path) or ""):gsub("^\239\187\191", "")
     local eol = data:find("\r\n", 1, true) and "\r\n" or "\n"
     local lines = {}
     for line in data:gmatch("([^\n]*)\n?") do
@@ -606,10 +611,16 @@ local function verify(e, part, dest)
             os.remove(part)
             return dl_done("檔案檢查不符（可能下載不完整），已刪除，請再下載一次", 7)
         end
-        os.remove(dest)
-        local ok, err = os.rename(part, dest)
-        if not ok then return dl_done("檔案改名失敗：" .. tostring(err), 6) end
-        after_download(e, dest)
+        local tries = 0
+        local function finish()
+            tries = tries + 1
+            os.remove(dest)
+            local ok, err = os.rename(part, dest)
+            if ok then return after_download(e, dest) end
+            if tries < 5 then return mp.add_timeout(2, finish) end -- 防毒軟體可能正在掃這個檔
+            dl_done("檔案改名失敗：" .. tostring(err) .. "。再點一次同一個模型就會重新檢查並完成", 8)
+        end
+        finish()
     end)
 end
 
@@ -679,9 +690,9 @@ end
 
 local function models_url(endpoint) return (endpoint:gsub("/chat/completions$", "/models")) end
 
-local function curl_json(args, callback)
+local function curl_json(args, callback, stdin_data)
     mp.command_native_async({
-        name = "subprocess", args = args,
+        name = "subprocess", args = args, stdin_data = stdin_data,
         capture_stdout = true, capture_stderr = true, playback_only = false,
     }, function(success, res)
         if not success or not res or res.status ~= 0 then
@@ -711,14 +722,11 @@ local function test_and_save(endpoint, model, key)
             "Translate the following segment into Traditional Chinese, without additional explanation.\n\nGood morning." } },
         max_tokens = 64, temperature = 0.2,
     })
-    local tmp = join(os.getenv("TEMP") or os.getenv("TMPDIR") or "/tmp", "kandong-server-test.json")
-    if not write_file(tmp, body) then return osd("寫不進暫存檔，無法測試", 5) end
     local args = auth_args({ "curl", "-sS", "--max-time", "120", "-X", "POST", endpoint,
         "-H", "Content-Type: application/json" }, key)
     args[#args + 1] = "--data-binary"
-    args[#args + 1] = "@" .. tmp
+    args[#args + 1] = "@-"
     curl_json(args, function(parsed, err)
-        os.remove(tmp)
         local content = parsed and parsed.choices and parsed.choices[1] and parsed.choices[1].message
             and parsed.choices[1].message.content
         if parsed and parsed.error then
@@ -733,7 +741,7 @@ local function test_and_save(endpoint, model, key)
         osd(("已改用 %s（模型 %s）。測試翻譯：Good morning. → %s"):format(
             host_of(endpoint), model, utf8_head((content:gsub("%s+", " ")), 90)), 7)
         refresh_menu()
-    end)
+    end, body)
 end
 
 local function ask_text(prompt, default, cb)

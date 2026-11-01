@@ -65,7 +65,7 @@ if [ ! -f "${KCONF}" ]; then
   cp "${PKG}/script-opts/kandong_settings.conf" "${KCONF}"
 fi
 mkdir -p "${MODELS}" "${LOGS}"
-rm -f "${REQ}"
+rm -f "${REQ}" "${REQ}.processing"
 
 # ── 2. 本機引擎 ──
 port_open() { lsof -nP -iTCP:"$1" -sTCP:LISTEN >/dev/null 2>&1; }
@@ -97,6 +97,7 @@ auto_model() {  # 依記憶體挑內建模型；都沒有就挑 models 資料夾
 chosen_model() {  # 設定選單選過的優先；檔案不在了就退回自動選
   local p
   p="$(conf_value "${KCONF}" model_path)"
+  p="${p#\"}"; p="${p%\"}"  # 手改時從 Finder 貼上可能帶引號
   case "${p}" in ""|/*) ;; *) p="${MODELS}/${p}" ;; esac
   if [ -n "${p}" ] && [ -f "${p}" ]; then echo "${p}"; return 0; fi
   auto_model
@@ -161,7 +162,7 @@ start_asr() {  # 有語音辨識模型、8090 沒人用、這次還沒開過 →
 cleanup() {
   stop_engine
   if [ -n "${ASR_PID}" ]; then kill "${ASR_PID}" 2>/dev/null || true; fi
-  rm -f "${STATUS}" "${STATUS}.tmp" "${REQ}"
+  rm -f "${STATUS}" "${STATUS}.tmp" "${REQ}" "${REQ}.processing"
 }
 trap cleanup EXIT
 
@@ -212,11 +213,13 @@ write_status 0 "${STATE}" "${ENGINE_MODEL}" "${ENGINE_ERROR}"
 
 # ── 3. 接設定選單的要求 ──
 handle_request() {
-  local id action model prev err
-  id="$(conf_value "${REQ}" id)"
-  action="$(conf_value "${REQ}" action)"
-  model="$(conf_value "${REQ}" model)"
-  rm -f "${REQ}"
+  local id action model prev err claimed="${REQ}.processing"
+  # 先改名「認領」再讀：讀完到刪檔之間選單寫的新要求不會被一起刪掉
+  mv -f "${REQ}" "${claimed}" 2>/dev/null || return 0
+  id="$(conf_value "${claimed}" id)"
+  action="$(conf_value "${claimed}" action)"
+  model="$(conf_value "${claimed}" model)"
+  rm -f "${claimed}"
   case "${action}" in
     switch)
       if [ "${STATE}" = "external" ]; then
