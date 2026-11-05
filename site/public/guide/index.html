@@ -42,7 +42,7 @@ document.addEventListener('click', function (e) {
 <link rel="stylesheet" href="/site.css">
 
 <!-- editorial-faq:start -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "說缺少「Visual C++ 可轉散發套件」", "acceptedAnswer": {"@type": "Answer", "text": "翻譯引擎需要微軟的這個元件。照畫面開的微軟官方頁面，下載 X64 版（vc_redist.x64.exe）安裝，再雙擊「看懂」。"}}, {"@type": "Question", "name": "翻譯引擎沒有成功啟動", "acceptedAnswer": {"@type": "Answer", "text": "先查記憶體與模型檔是否完整；可改用輕量模型（一鍵下載選 2）。兩個翻譯模型都放的話，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。"}}, {"@type": "Question", "name": "左上角出現「翻譯伺服器連線失敗」", "acceptedAnswer": {"@type": "Answer", "text": "請用「看懂」啟動，不要直接開 mpv.exe：「看懂」會先把翻譯引擎開好。"}}, {"@type": "Question", "name": "沒字幕的片沒有出現字幕", "acceptedAnswer": {"@type": "Answer", "text": "需要語音辨識模型（一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。"}}, {"@type": "Question", "name": "還是不行？", "acceptedAnswer": {"@type": "Answer", "text": "到 GitHub Issues 開一則，附上作業系統、影片格式、畫面上的訊息，和 logs 資料夾裡的記錄。"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "說缺少「Visual C++ 可轉散發套件」", "acceptedAnswer": {"@type": "Answer", "text": "翻譯引擎需要微軟的這個元件。照畫面開的微軟官方頁面，下載 X64 版（vc_redist.x64.exe）安裝，再雙擊「看懂」。"}}, {"@type": "Question", "name": "翻譯引擎沒有成功啟動", "acceptedAnswer": {"@type": "Answer", "text": "先查記憶體與模型檔是否完整；可改用輕量模型（右鍵 → 設定 → 翻譯模型與伺服器，或一鍵下載選 2）。沒在設定選單選過的話，兩個翻譯模型都在時，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。"}}, {"@type": "Question", "name": "左上角出現「翻譯伺服器連線失敗」", "acceptedAnswer": {"@type": "Answer", "text": "請用「看懂」啟動，不要直接開 mpv.exe：「看懂」會先把翻譯引擎開好。"}}, {"@type": "Question", "name": "沒字幕的片沒有出現字幕", "acceptedAnswer": {"@type": "Answer", "text": "需要語音辨識模型（右鍵 → 設定 → 翻譯模型與伺服器下載，或一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。"}}, {"@type": "Question", "name": "還是不行？", "acceptedAnswer": {"@type": "Answer", "text": "到 GitHub Issues 開一則，附上作業系統、影片格式、畫面上的訊息，和 logs 資料夾裡的記錄。"}}]}</script>
 <!-- editorial-faq:end -->
 </head>
 <body>
@@ -117,10 +117,22 @@ document.addEventListener('click', function (e) {
     <div style="margin-bottom: 56px">
       <div style="width: 52px; height: 52px; border-radius: 50%; background: #f4e1dd; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">2</div>
       <h3 style="font-size: 26px; font-weight: 900; margin: 14px 0 8px">拿翻譯模型（只要一次）</h3>
-      <p style="margin: 0 0 24px; color: #5a4845; max-width: 44em">模型就是「翻譯的大腦」，檔案比較大，所以沒有直接包進下載檔。兩種拿法選一種：</p>
+      <p style="margin: 0 0 24px; color: #5a4845; max-width: 44em">模型就是「翻譯的大腦」，檔案比較大，所以沒有直接包進下載檔。三種拿法選一種：</p>
       <div style="display: flex; flex-wrap: wrap; gap: 24px">
-        <div style="flex: 1 1 400px; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff; box-shadow: 4px 4px 0 #f5b83d">
-          <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">A. 一鍵下載（最簡單）</p>
+        <div style="flex: 1 1 100%; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff; box-shadow: 4px 4px 0 #f5b83d">
+          <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">A. 在播放器裡下載（最簡單）</p>
+          <p style="margin: 0 0 14px; color: #5a4845; font-size: 15px">還沒有模型也可以直接雙擊「看懂」，播放器會提示你去哪裡下載：<strong style="color: #201914">按右鍵 → 設定 → 翻譯模型與伺服器</strong>，點要的模型。一樣從 Hugging Face 官方下載、自動檢查檔案，下載完就自動開始用；可以邊看片邊下載，中斷了下次接著下。</p>
+          <div style="background: #14100e; color: #e8e2dc; border-radius: 10px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap">翻譯模型與伺服器
+  目前：還沒有翻譯模型——請先在下面下載一個
+
+下載模型（Hugging Face 官方，會檢查檔案是否完整）
+  <span style="background: #f5b83d; color: #201914; padding: 0 4px">下載 Hy-MT2 7B（標準）</span>
+  下載 Hy-MT2 1.8B（輕量）
+  下載 語音辨識模型（Whisper）</div>
+          <p style="margin: 10px 0 0; font-size: 13px; color: #786866">示意圖：設定選單的下載區（實際會多顯示檔案大小）。同一個選單也能換模型，或改連 Ollama、LM Studio 等其他翻譯服務。</p>
+        </div>
+        <div style="flex: 1 1 400px; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff">
+          <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">B. 一鍵下載（先下載好再開）</p>
           <p style="margin: 0 0 14px; color: #5a4845; font-size: 15px">雙擊「一鍵下載模型」，輸入編號按 Enter。會從 Hugging Face 官方下載、放進 models 資料夾、自動檢查檔案。中斷了再雙擊一次會接著下載。</p>
           <div style="background: #14100e; color: #e8e2dc; border-radius: 10px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap">===== 看懂：一鍵下載模型 =====
 這台電腦記憶體約 16 GB，建議選 1（標準）。
@@ -133,7 +145,7 @@ document.addEventListener('click', function (e) {
           <p style="margin: 10px 0 0; font-size: 13px; color: #786866">示意圖：輸入 13 ＝標準翻譯模型＋語音辨識模型一起下載</p>
         </div>
         <div style="flex: 1 1 400px; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff">
-          <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">B. 自己下載（想先確認來源）</p>
+          <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">C. 自己下載（想先確認來源）</p>
           <p style="margin: 0 0 14px; color: #5a4845; font-size: 15px">用瀏覽器點下面的連結下載，<strong style="color: #201914">檔案直接放進 KanDong 裡的 models 資料夾，檔名不要改</strong>。</p>
           <div style="overflow-x: auto">
             <table style="border-collapse: collapse; width: 100%; font-size: 14px">
@@ -177,7 +189,7 @@ document.addEventListener('click', function (e) {
       </div>
       <div style="border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff">
         <p style="margin: 0 0 6px; font-weight: 900; font-size: 19px">1. 解壓、拿模型</p>
-        <p style="margin: 0; color: #5a4845; font-size: 15px">解壓 KanDong-mac.zip，雙擊「一鍵下載模型.command」選編號；或照上面 B 的連結自己下載，放進 models 資料夾。</p>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">解壓 KanDong-mac.zip。模型可以等播放器開了再從右鍵 → 設定下載（上面 A），或雙擊「一鍵下載模型.command」選編號；也可以照上面 C 的連結自己下載，放進 models 資料夾。</p>
       </div>
       <div style="border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff">
         <p style="margin: 0 0 6px; font-weight: 900; font-size: 19px">2. 雙擊「看懂.command」</p>
@@ -194,7 +206,7 @@ document.addEventListener('click', function (e) {
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">翻譯引擎沒有成功啟動</summary>
-      <p style="margin: 10px 0 0; color: #5a4845">先查記憶體與模型檔是否完整；可改用輕量模型（一鍵下載選 2）。兩個翻譯模型都放的話，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。</p>
+      <p style="margin: 10px 0 0; color: #5a4845">先查記憶體與模型檔是否完整；可改用輕量模型（右鍵 → 設定 → 翻譯模型與伺服器，或一鍵下載選 2）。沒在設定選單選過的話，兩個翻譯模型都在時，記憶體 12GB 以上會自動用標準版。詳細記錄在 logs 資料夾（Mac 在 ~/Library/Logs/KanDong）。</p>
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">左上角出現「翻譯伺服器連線失敗」</summary>
@@ -202,7 +214,7 @@ document.addEventListener('click', function (e) {
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">沒字幕的片沒有出現字幕</summary>
-      <p style="margin: 10px 0 0; color: #5a4845">需要語音辨識模型（一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。</p>
+      <p style="margin: 10px 0 0; color: #5a4845">需要語音辨識模型（右鍵 → 設定 → 翻譯模型與伺服器下載，或一鍵下載選 3）。聽寫與翻譯完成後才會出現字幕；若出現「語音辨識跟不上」，按 S 回 1x。</p>
     </details>
     <details style="border-top: 2px solid #201914; border-bottom: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">還是不行？</summary>

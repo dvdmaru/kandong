@@ -13,7 +13,7 @@
 - [沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中](https://kandong.twtools.cc/articles/auto-chinese-subtitles/)：沒字幕的影片要先用 Whisper 把對白聽寫成原文，再用 Hy-MT2 翻成繁中；除了翻譯模型，還要多下載約 574MB 的語音辨識模型。
 
 ## 使用支援
-- [常見問題](https://kandong.twtools.cc/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、模型選單尚未實作、連線、快取與本機處理的前提。
+- [常見問題](https://kandong.twtools.cc/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、在播放器裡換模型與連其他伺服器、連線、快取與本機處理的前提。
 - [原始碼與 README](https://github.com/dvdmaru/kandong)：功能、唯一引用的產品實測條件與已知限制。
 - [最新版](https://github.com/dvdmaru/kandong/releases/latest)：取得播放器下載包。
 

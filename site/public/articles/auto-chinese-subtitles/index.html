@@ -21,7 +21,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-R9KBKJFEH1');
 </script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "@id": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/#article", "headline": "沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中", "description": "沒字幕的影片要先用 Whisper 把對白聽寫成原文，再用 Hy-MT2 翻成繁中；除了翻譯模型，還要多下載約 574MB 的語音辨識模型。", "inLanguage": "zh-TW", "datePublished": "2026-10-24T23:45:00+08:00", "dateModified": "2026-10-24T23:45:00+08:00", "author": {"@type": "Organization", "name": "看懂 KanDong", "url": "https://kandong.twtools.cc/"}, "publisher": {"@type": "Organization", "name": "看懂 KanDong", "url": "https://kandong.twtools.cc/"}, "mainEntityOfPage": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/", "image": ["https://kandong.twtools.cc/img/watching.jpg"], "isAccessibleForFree": true}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "@id": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/#article", "headline": "沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中", "description": "沒字幕的影片要先用 Whisper 把對白聽寫成原文，再用 Hy-MT2 翻成繁中；除了翻譯模型，還要多下載約 574MB 的語音辨識模型。", "inLanguage": "zh-TW", "datePublished": "2026-10-24T23:45:00+08:00", "dateModified": "2026-11-05T23:45:00+08:00", "author": {"@type": "Organization", "name": "看懂 KanDong", "url": "https://kandong.twtools.cc/"}, "publisher": {"@type": "Organization", "name": "看懂 KanDong", "url": "https://kandong.twtools.cc/"}, "mainEntityOfPage": "https://kandong.twtools.cc/articles/auto-chinese-subtitles/", "image": ["https://kandong.twtools.cc/img/watching.jpg"], "isAccessibleForFree": true}]}</script>
 </head><body>
 <a class="skip" href="#main">跳到內容</a>
 <header class="site-header"><div class="bar">
@@ -39,10 +39,10 @@ gtag('config', 'G-R9KBKJFEH1');
 <p>看懂先把音訊交給 whisper.cpp，產生原文與時間軸，再把原文交給 Hy-MT2，顯示原文與繁中譯文。原文聽錯，譯文也可能跟著錯，所以遇到怪句時，先對照原文那一行。</p>
 <p><a href="https://github.com/ggml-org/whisper.cpp">whisper.cpp</a> 是 Whisper 的本機執行實作。這個分工也表示：只有 Hy-MT2 模型，不能直接把一段聲音翻成中文字幕。</p>
 <h2 id="prepare">翻譯模型之外，還要準備語音辨識模型</h2>
-<p>先依<a href="/guide/">圖文教學</a>下載並解壓看懂。使用「一鍵下載模型」準備翻譯模型後，再選語音辨識模型；這裡下載的是模型，不是影片或字幕。</p>
+<p>先依<a href="/guide/">圖文教學</a>下載並解壓看懂。在播放器的右鍵 → 設定 → 翻譯模型與伺服器（或用「一鍵下載模型」）準備翻譯模型後，再下載語音辨識模型；這裡下載的是模型，不是影片或字幕。</p>
 <div class="options"><section><h3>翻譯模型</h3><p>README 建議記憶體 8GB 或較舊的電腦用 Hy-MT2 1.8B，16GB 以上用 7B。模型檔約為 1.1GB 與 4.6GB；檔案大小不等於執行時只需要同樣多的記憶體。</p></section>
 <section><h3>語音辨識模型</h3><p>Whisper large-v3-turbo 約 574MB。原本已有可用文字字幕的影片不需要這一步；無字幕或只有圖形字幕時才需要。</p></section></div>
-<p>Mac 版適用 Apple 晶片，還要完成圖文教學中的 Homebrew 工具安裝。兩個翻譯模型都放進資料夾時，啟動器會依記憶體選擇；目前「模型」選單仍是預告，不能靠選單直接切換。</p>
+<p>Mac 版適用 Apple 晶片，還要完成圖文教學中的 Homebrew 工具安裝。兩個翻譯模型都放進資料夾時，啟動器會依記憶體選擇；也可以在右鍵 → 設定 → 翻譯模型與伺服器自己指定。</p>
 <h2 id="play">用「看懂」啟動，讓聽寫先累積字幕</h2>
 <ol><li>準備一個自製或已取得相應處理授權、含對白的影片檔。</li><li>雙擊「看懂」，Mac 則用「看懂.command」。讓啟動器準備引擎，再把影片拖進播放器。</li><li>先用正常速度播放，等聽寫與翻譯產生內容，再確認原文和繁中是否都出現。聽寫是分段處理，不是開檔就瞬間取得整部字幕。</li></ol>
 <p>若畫面顯示「語音辨識跟不上」，先按 <kbd>S</kbd> 回到正常速度。跳轉或播放超過處理進度時，尚未完成的區段可能沒有字幕；不能把字幕空白直接判成那一段沒有對白。</p>
