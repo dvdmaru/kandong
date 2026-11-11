@@ -4,6 +4,7 @@
 
 可以改用雲端 API 翻譯（OpenAI／Claude／Gemini，使用者自選）；語音辨識模型與 Echoic 線下版共用。
 
+- 改用雲端 API（或區網翻譯伺服器）時，語音辨識仍在這台電腦跑：啟動器改看 `asr_endpoint` 決定要不要開本機語音辨識引擎（以前只要翻譯不在本機就不開，沒字幕的片會一直「語音辨識失敗」）。
 - 雲端 API 模式（使用者自選、本機模型照舊）：設定 → 翻譯模型與伺服器 →「連到雲端 API 或其他翻譯伺服器」→ OpenAI／Claude／Gemini。
   先複製金鑰再點（讀剪貼簿）→ 向那一家即時查模型清單、便宜又快的排第一 → 試翻一句成功才改用。
   - 各家送對的參數：OpenAI 用 `max_completion_tokens`、不送 `temperature`；Claude 走原生 Messages API、不送 `temperature`；

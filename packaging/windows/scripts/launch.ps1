@@ -312,6 +312,9 @@ if (-not (Test-Path -LiteralPath $KConf)) {
 # 3)＋4) 設定的翻譯伺服器若不是這台電腦（例如連區網另一台、Ollama），就不開本機引擎
 $endpoint = Get-ConfValue $Conf 'endpoint'
 $localEngine = ($endpoint -eq '') -or ($endpoint -match "^https?://(127\.0\.0\.1|localhost):$TranslatePort/")
+# 語音辨識另外看 asr_endpoint：翻譯改用雲端 API 時，語音辨識仍在這台電腦跑
+$asrEndpoint = Get-ConfValue $Conf 'asr_endpoint'
+$localAsr = ($asrEndpoint -eq '') -or ($asrEndpoint -match "^https?://(127\.0\.0\.1|localhost):$AsrPort/")
 
 if (-not $localEngine) {
     $script:State = 'remote'
@@ -349,7 +352,7 @@ if (-not $localEngine) {
 }
 
 # 5) 語音辨識（只有看沒字幕的片才需要；沒下載模型就略過）
-if ($localEngine) { Start-Asr }
+if ($localAsr) { Start-Asr }
 Write-Status '0' $script:State $script:EngineModel $script:EngineError
 
 # 6) 開播放器；拖到「看懂」上的影片會一起帶進來
