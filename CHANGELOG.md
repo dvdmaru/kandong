@@ -2,6 +2,18 @@
 
 ## 未發佈
 
+- 雲端 API 模式（使用者自選、本機模型照舊）：設定 → 翻譯模型與伺服器 →「連到雲端 API 或其他翻譯伺服器」→ OpenAI／Claude／Gemini。
+  先複製金鑰再點（讀剪貼簿）→ 向那一家即時查模型清單、便宜又快的排第一 → 試翻一句成功才改用。
+  - 各家送對的參數：OpenAI 用 `max_completion_tokens`、不送 `temperature`；Claude 走原生 Messages API、不送 `temperature`；
+    Gemini 走 OpenAI 相容端點。思考程度從最快一檔往下試，記住這個模型接受的那檔；模型換代後不認得就自動拿掉再試。
+  - 雲端時同時送 3 句（本機引擎仍一次 1 句）。
+  - 錯誤講白話：金鑰不對、額度用完（並說去哪個後台）、被限流或忙線（自動稍後重試）、模型下架。
+  - 金鑰存 Mac 鑰匙圈／Windows DPAPI，不放在看懂資料夾；設定檔只記 `key_ref`。交給 curl／security／PowerShell 時用只有本人讀得到的暫存檔、用完即刪，
+    不上命令列，也不會出現在 mpv 的除錯紀錄。「刪除這台電腦存的 API 金鑰」一次刪掉並改回本機。
+  - 自訂伺服器的金鑰也改存系統加密存放區（舊設定檔裡的 `api_key` 照樣能用）。
+  - 新增共用模組 `script-modules/kandong_cloud.lua`（翻譯腳本與設定選單共用）；Mac 啟動器與打包一併安裝。
+  - 測試：`tests/test_settings_menu.py` 補選單與狀態列；`tests/live_cloud_test.py`、`tests/live_menu_test.py` 用真金鑰實測（手動跑）。
+
 - 與 Echoic 線下版共用語音辨識模型：共用資料夾 `~/.cache/twtools/models/`（Windows `%USERPROFILE%\.cache\twtools\models\`）。語音辨識模型改下載到這裡；裝過其中一個工具就不必再下載，對方下載的未量化版也能直接用。
 - 共用清單與規則寫在 `models-catalog.json`（兩個工具各放一份）；另一個程式正在下載同一個檔時不會重開一份。
 - 設定選單也會列出共用資料夾裡的 `.gguf`。

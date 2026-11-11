@@ -50,7 +50,7 @@ if [ $# -ge 1 ] && [ "${1#-}" = "$1" ] && [ ! -e "$1" ]; then
 fi
 
 # ── 1. 裝介面與翻譯腳本 ──
-mkdir -p "${CONFIG}/scripts" "${CONFIG}/script-opts"
+mkdir -p "${CONFIG}/scripts" "${CONFIG}/script-opts" "${CONFIG}/script-modules"
 if [ "$(cat "${CONFIG}/scripts/uosc/.kandong-version" 2>/dev/null || true)" = "5.13.0" ]; then
   cp "${PKG}/ui/uosc.conf" "${PKG}/ui/uosc-zh-TW.json" "${CONFIG}/script-opts/"
   cp "${PKG}/ui/input.conf" "${PKG}/ui/mpv.conf" "${CONFIG}/"
@@ -58,6 +58,8 @@ else
   bash "${PKG}/ui/install-uosc.sh" "${CONFIG}"
 fi
 cp "${PKG}/scripts/"*.lua "${CONFIG}/scripts/"
+# 雲端 API 共用模組（放 script-modules：mpv 不會把它當獨立腳本執行）
+cp "${PKG}/script-modules/"*.lua "${CONFIG}/script-modules/"
 CONF="${CONFIG}/script-opts/floattranslate.conf"
 if [ ! -f "${CONF}" ]; then
   (umask 077 && cp "${PKG}/script-opts/floattranslate.conf" "${CONF}")

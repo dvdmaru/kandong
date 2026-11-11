@@ -8,8 +8,10 @@
 --      引擎由啟動器（mac/kandong.sh、Windows 的 scripts/launch.ps1）負責開關，
 --      這支只寫一個「請換模型」的要求檔，啟動器換好後寫回狀態檔。
 --      不是用「看懂」啟動器開的播放器沒有人接要求 → 只記住選擇，下次用「看懂」開就生效。
---   4. 改連其他翻譯伺服器（Ollama、LM Studio、區網另一台）：先實際翻一句測試，成功才寫進
---      floattranslate.conf，並通知翻譯腳本立刻改用。
+--   4. 改連其他翻譯伺服器（Ollama、LM Studio、區網另一台）或雲端 API（OpenAI／Claude／Gemini）：
+--      先實際翻一句測試，成功才寫進 floattranslate.conf，並通知翻譯腳本立刻改用。
+--      雲端 API 的三家參數、模型清單與金鑰存放在 script-modules/kandong_cloud.lua（翻譯腳本共用）；
+--      金鑰存在 Mac 鑰匙圈／Windows 加密存放區，設定檔只記名字（key_ref）。
 --
 -- 與啟動器之間的檔案（都在 control_dir，啟動器用 script-opts 帶進來）：
 --   engine-request.txt  這支寫、啟動器讀完就刪：id=… action=switch|stop|asr model=…
@@ -20,6 +22,18 @@ local mp = require "mp"
 local utils = require "mp.utils"
 local msg = require "mp.msg"
 local options = require "mp.options"
+-- 共用模組在設定資料夾的 script-modules（mpv 不會自動把它加進搜尋路徑）
+do
+    local dir = mp.command_native({ "expand-path", "~~/script-modules" })
+    if type(dir) == "string" and dir ~= "" and not package.path:find(dir, 1, true) then
+        package.path = dir .. "/?.lua;" .. package.path
+    end
+end
+local cloud_ok, cloud = pcall(require, "kandong_cloud")
+if not cloud_ok then
+    msg.warn("找不到 script-modules/kandong_cloud.lua：" .. tostring(cloud))
+    cloud = nil
+end
 
 local o = {
     models_dir = "",   -- 啟動器帶進來；Windows 沒帶時用 mpv.exe 旁的 models
@@ -217,6 +231,8 @@ local function current_server()
         endpoint = (c.endpoint and c.endpoint ~= "") and c.endpoint or DEFAULT_ENDPOINT,
         model = (c.model and c.model ~= "") and c.model or DEFAULT_MODEL,
         api_key = c.api_key or "",
+        provider = c.provider or "",
+        key_ref = c.key_ref or "",
     }
 end
 
@@ -409,6 +425,10 @@ local function refresh_menu()
 end
 
 local function status_line(st, server)
+    local p = cloud and cloud.provider(server.provider)
+    if p then
+        return ("雲端 API：%s（模型 %s）· 字幕會送到 %s、按用量付費"):format(p.label, server.model, p.label)
+    end
     if not is_local_endpoint(server.endpoint) then
         return ("外部伺服器 %s（模型 %s）"):format(host_of(server.endpoint), server.model)
     end
@@ -492,15 +512,33 @@ build_menu = function()
     -- 其他
     add({ title = "開啟模型資料夾", hint = "把 .gguf 檔放進去，重開這個選單就會出現", value = act("open-folder") })
     add({ title = "使用其他位置的模型檔…", hint = "貼上 .gguf 檔的完整路徑", value = act("custom-path") })
-    local server_items = {
+    local server_items = {}
+    if cloud then
+        for _, pr in ipairs({ { "openai", "OpenAI（雲端 API）" }, { "anthropic", "Claude（Anthropic 雲端 API）" },
+                              { "google", "Gemini（Google 雲端 API）" } }) do
+            local p = cloud.PROVIDERS[pr[1]]
+            server_items[#server_items + 1] = {
+                title = pr[2], active = server.provider == pr[1] or nil,
+                hint = "要 API 金鑰 · 按用量付費 · 字幕會送到 " .. p.label,
+                value = act("server-cloud", pr[1]),
+            }
+        end
+        server_items[#server_items].separator = true
+    end
+    for _, it in ipairs({
         { title = "Ollama（這台電腦）", hint = "127.0.0.1:11434", value = act("server-preset", "http://127.0.0.1:11434/v1/chat/completions") },
         { title = "LM Studio（這台電腦）", hint = "127.0.0.1:1234", value = act("server-preset", "http://127.0.0.1:1234/v1/chat/completions") },
         { title = "自己輸入網址…", hint = "區網另一台電腦、其他 OpenAI 相容服務", value = act("server-custom") },
-    }
+    }) do server_items[#server_items + 1] = it end
     if not local_mode then
         server_items[#server_items + 1] = { title = "改回這台電腦內建的翻譯模型", value = act("server-local") }
     end
-    add({ title = "連到其他翻譯伺服器", hint = local_mode and "" or ("使用中：" .. host_of(server.endpoint)),
+    if cloud then
+        server_items[#server_items].separator = true
+        server_items[#server_items + 1] = { title = "刪除這台電腦存的 API 金鑰",
+            hint = "鑰匙圈／Windows 加密存放區裡看懂存的金鑰", value = act("forget-keys") }
+    end
+    add({ title = "連到雲端 API 或其他翻譯伺服器", hint = local_mode and "" or ("使用中：" .. host_of(server.endpoint)),
           items = server_items })
 
     return {
@@ -563,9 +601,12 @@ local function poll_switch()
     end
 end
 
-local function server_set(endpoint, model, api_key)
-    conf_write("floattranslate.conf", { { "endpoint", endpoint }, { "model", model }, { "api_key", api_key } })
-    tell_translator("ft-server-changed", endpoint, model, api_key)
+-- 金鑰不寫進設定檔（api_key 留空）：雲端與自訂伺服器的金鑰存在系統加密存放區，設定檔只記 key_ref
+local function server_set(endpoint, model, api_key, provider, key_ref, effort)
+    provider, key_ref, effort = provider or "", key_ref or "", effort or ""
+    conf_write("floattranslate.conf", { { "endpoint", endpoint }, { "model", model }, { "api_key", api_key },
+        { "provider", provider }, { "key_ref", key_ref }, { "reasoning_effort", effort } })
+    tell_translator("ft-server-changed", endpoint, model, api_key, provider, key_ref, effort)
 end
 
 local function switch_model(path)
@@ -745,43 +786,23 @@ end
 
 local function models_url(endpoint) return (endpoint:gsub("/chat/completions$", "/models")) end
 
-local function curl_json(args, callback, stdin_data)
-    mp.command_native_async({
-        name = "subprocess", args = args, stdin_data = stdin_data,
-        capture_stdout = true, capture_stderr = true, playback_only = false,
-    }, function(success, res)
-        if not success or not res or res.status ~= 0 then
-            return callback(nil, tostring(res and res.stderr or "連不上"):gsub("%s+$", ""):sub(1, 120))
-        end
-        local ok, parsed = pcall(utils.parse_json, res.stdout or "")
-        if not ok or type(parsed) ~= "table" then
-            return callback(nil, "回應不是 JSON：" .. tostring(res.stdout):sub(1, 80))
-        end
-        callback(parsed, nil)
-    end)
-end
-
-local function auth_args(args, key)
-    if key and key ~= "" then
-        args[#args + 1] = "-H"
-        args[#args + 1] = "Authorization: Bearer " .. key
-    end
-    return args
+-- OpenAI 相容伺服器的請求（金鑰經 stdin 交給 curl，不上命令列）
+local function generic_request(url, key, body, timeout, cb)
+    if not cloud then return cb(nil, nil, "少了 script-modules/kandong_cloud.lua") end
+    local headers = {}
+    if key and key ~= "" then headers[1] = "Authorization: Bearer " .. key end
+    cloud.request({ url = url, headers = headers, body = body, timeout = timeout }, cb)
 end
 
 local function test_and_save(endpoint, model, key)
     osd("測試翻譯中（" .. host_of(endpoint) .. "，模型 " .. model .. "）…", 30)
-    local body = utils.format_json({
+    local body = {
         model = model,
         messages = { { role = "user", content =
             "Translate the following segment into Traditional Chinese, without additional explanation.\n\nGood morning." } },
         max_tokens = 64, temperature = 0.2,
-    })
-    local args = auth_args({ "curl", "-sS", "--max-time", "120", "-X", "POST", endpoint,
-        "-H", "Content-Type: application/json" }, key)
-    args[#args + 1] = "--data-binary"
-    args[#args + 1] = "@-"
-    curl_json(args, function(parsed, err)
+    }
+    generic_request(endpoint, key, body, 120, function(code, parsed, err)
         local content = parsed and parsed.choices and parsed.choices[1] and parsed.choices[1].message
             and parsed.choices[1].message.content
         if parsed and parsed.error then
@@ -790,13 +811,20 @@ local function test_and_save(endpoint, model, key)
         if type(content) ~= "string" or content:gsub("%s", "") == "" then
             return osd("連線測試失敗，設定沒有改：" .. tostring(err or "沒有拿到譯文"), 8)
         end
-        server_set(endpoint, model, key)
-        local st = read_status()
-        if st and st.state == "ready" then send_request("stop", "") end -- 不用本機模型了，把記憶體還給電腦
-        osd(("已改用 %s（模型 %s）。測試翻譯：Good morning. → %s"):format(
-            host_of(endpoint), model, utf8_head((content:gsub("%s+", " ")), 90)), 7)
-        refresh_menu()
-    end, body)
+        local function save(key_ref)
+            server_set(endpoint, model, "", "", key_ref, "")
+            local st = read_status()
+            if st and st.state == "ready" then send_request("stop", "") end -- 不用本機模型了，把記憶體還給電腦
+            osd(("已改用 %s（模型 %s）。測試翻譯：Good morning. → %s"):format(
+                host_of(endpoint), model, utf8_head((content:gsub("%s+", " ")), 90)), 7)
+            refresh_menu()
+        end
+        if not key or key == "" then return save("") end
+        cloud.secret_store("custom", key, function(ok, serr)
+            if not ok then return osd("金鑰存不起來，設定沒有改：" .. tostring(serr), 8) end
+            save("custom")
+        end)
+    end)
 end
 
 local function ask_text(prompt, default, cb)
@@ -814,7 +842,7 @@ end
 
 local function pick_model(endpoint, key)
     osd("向伺服器查詢有哪些模型…", 10)
-    curl_json(auth_args({ "curl", "-sS", "--max-time", "8", models_url(endpoint) }, key), function(parsed, err)
+    generic_request(models_url(endpoint), key, nil, 8, function(code, parsed, err)
         local ids = {}
         if parsed and type(parsed.data) == "table" then
             for _, m in ipairs(parsed.data) do
@@ -823,7 +851,7 @@ local function pick_model(endpoint, key)
         end
         mp.osd_message("")
         if #ids == 0 then
-            if err then osd("查不到模型清單（" .. err .. "），請自己輸入模型名稱", 5) end
+            if err or code then osd("查不到模型清單（" .. tostring(err or ("HTTP " .. tostring(code))) .. "），請自己輸入模型名稱", 5) end
             return ask_text("模型名稱（例如 qwen2.5:7b）：", "", function(name)
                 name = strip_quotes(name)
                 if name ~= "" then test_and_save(endpoint, name, key) end
@@ -833,6 +861,62 @@ local function pick_model(endpoint, key)
         local items = {}
         for _, id in ipairs(ids) do items[#items + 1] = { title = id, value = act("server-model", id) } end
         open_or_update({ type = MENU_TYPE .. "_models", title = "選要用來翻譯的模型（" .. host_of(endpoint) .. "）",
+                         items = items }, false)
+    end)
+end
+
+-- ===== 雲端 API（OpenAI／Claude／Gemini）=====
+
+local cloud_pending = nil -- { provider, key, is_new }
+
+-- 試翻一句；思考程度從最快的一檔往下試，試到這個模型接受的那檔就記住
+local function cloud_test_and_save(pname, model, key, is_new)
+    local p = cloud.PROVIDERS[pname]
+    osd(("測試翻譯中（%s，模型 %s）…"):format(p.label, model), 30)
+    local prompt = "Translate the following segment into Traditional Chinese, without additional explanation.\n\nGood morning."
+    local efforts = p.efforts
+    local function try(i)
+        local effort = efforts[i]
+        cloud.request(cloud.chat_spec(pname, key, model, prompt, effort, 60), function(code, parsed, err)
+            if code ~= 200 and i < #efforts and cloud.effort_rejected(code, parsed) then
+                return try(i + 1)
+            end
+            local text = code == 200 and cloud.chat_text(pname, parsed) or nil
+            if not text or text:gsub("%s", "") == "" then
+                local why = code == 200 and "沒有拿到譯文" or (cloud.explain(pname, code, parsed, err))
+                return osd("連線測試失敗，設定沒有改：" .. why, 9)
+            end
+            local function save()
+                server_set(p.endpoint, model, "", pname, pname, effort)
+                local st = read_status()
+                if st and st.state == "ready" then send_request("stop", "") end
+                osd(("已改用 %s（模型 %s）。字幕會送到 %s、按用量付費。測試翻譯：Good morning. → %s"):format(
+                    p.label, model, p.label, utf8_head((text:gsub("%s+", " ")), 60)), 8)
+                refresh_menu()
+            end
+            if not is_new then return save() end
+            cloud.secret_store(pname, key, function(ok, serr)
+                if not ok then return osd("金鑰存不起來，設定沒有改：" .. tostring(serr), 8) end
+                save()
+            end)
+        end)
+    end
+    try(1)
+end
+
+local function cloud_pick_model(pname, key, is_new)
+    local p = cloud.PROVIDERS[pname]
+    osd("向 " .. p.label .. " 查詢可用的模型…", 15)
+    cloud.list_models(pname, key, function(list, err)
+        mp.osd_message("")
+        if not list or #list == 0 then return osd("查不到模型清單，設定沒有改：" .. tostring(err), 8) end
+        cloud_pending = { provider = pname, key = key, is_new = is_new }
+        local items = {}
+        for i, m in ipairs(list) do
+            items[#items + 1] = { title = m.title, hint = (i == 1 and "推薦：便宜又快 · " or "") .. m.id,
+                                  value = act("cloud-model", m.id) }
+        end
+        open_or_update({ type = MENU_TYPE .. "_models", title = "選 " .. p.label .. " 的翻譯模型（按用量付費）",
                          items = items }, false)
     end)
 end
@@ -878,6 +962,53 @@ actions["server-custom"] = function()
     end)
 end
 
+-- 金鑰從哪來：①剪貼簿（先在瀏覽器複製好金鑰再點選單；讀屬性不會進 mpv 除錯紀錄）
+-- ②這台電腦已存的 ③都沒有才開輸入框（輸入框的內容會進 mpv 除錯紀錄，所以排最後）
+actions["server-cloud"] = function(pname)
+    if not cloud or not cloud.PROVIDERS[pname] then return osd("這個版本少了雲端 API 模組", 5) end
+    local p = cloud.PROVIDERS[pname]
+    local clip = strip_quotes(mp.get_property("clipboard/text") or "")
+    if cloud.looks_like(pname, clip) then
+        osd(("讀到剪貼簿裡的 %s 金鑰（尾碼 %s）"):format(p.label, cloud.mask(clip)), 4)
+        return cloud_pick_model(pname, clip, true)
+    end
+    cloud.secret_read(pname, function(saved)
+        if saved then
+            osd(("沿用這台電腦已存的 %s 金鑰（尾碼 %s）。要換新金鑰：先複製新金鑰，再點一次"):format(
+                p.label, cloud.mask(saved)), 5)
+            return cloud_pick_model(pname, saved, false)
+        end
+        osd(("先到 %s 複製 API 金鑰，再點一次這個選項；或直接在下面貼上"):format(p.console), 8)
+        ask_text(("貼上 %s API 金鑰："):format(p.label), "", function(text)
+            local key = strip_quotes(text or "")
+            if key == "" then return end
+            if not cloud.valid_key(key) then return osd("金鑰格式不對：請重新複製一次（不要含空白）", 6) end
+            cloud_pick_model(pname, key, true)
+        end)
+    end)
+end
+
+actions["cloud-model"] = function(id)
+    if not cloud_pending then return end
+    local c = cloud_pending
+    cloud_pending = nil
+    cloud_test_and_save(c.provider, id, c.key, c.is_new)
+end
+
+actions["forget-keys"] = function()
+    if not cloud then return end
+    local left = #cloud.ACCOUNT_LIST
+    local using_key = current_server().key_ref ~= ""
+    for _, acc in ipairs(cloud.ACCOUNT_LIST) do
+        cloud.secret_delete(acc, function()
+            left = left - 1
+            if left > 0 then return end
+            osd("已刪除這台電腦存的 API 金鑰", 5)
+            if using_key then actions["server-local"]() end
+        end)
+    end
+end
+
 actions["server-model"] = function(id)
     if not pending then return end
     local p = pending
@@ -892,7 +1023,7 @@ actions["server-local"] = function()
             if catalog_by_file(m.name) then target = m.path; break end
         end
     end
-    server_set(DEFAULT_ENDPOINT, DEFAULT_MODEL, "")
+    server_set(DEFAULT_ENDPOINT, DEFAULT_MODEL, "", "", "", "")
     if target then return switch_model(target) end
     osd("已改回這台電腦，但還沒有翻譯模型：請在這個選單下載一個", 6)
     refresh_menu()

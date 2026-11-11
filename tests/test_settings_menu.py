@@ -114,6 +114,7 @@ def main():
               home + "/.lmstudio/models/pub/mymodel", home + "/.cache/kandong/models"):
         os.makedirs(d, exist_ok=True)
     shutil.copy(os.path.join(REPO, "scripts/kandong_settings.lua"), cfg + "/scripts/")
+    shutil.copytree(os.path.join(REPO, "script-modules"), cfg + "/script-modules")
     open(cfg + "/scripts/uosc/main.lua", "w").write(FAKE_UOSC)
     open(cfg + "/scripts/floattranslate.lua", "w").write(FAKE_TRANSLATOR)
     shutil.copy(os.path.join(REPO, "script-opts/floattranslate.conf"), cfg + "/script-opts/")
@@ -283,6 +284,14 @@ def main():
               "使用中的模型有標記")
         check("下載 Hy-MT2 7B（標準）" in t and "下載 Hy-MT2 1.8B（輕量）" not in t, "已經有的模型不出現在下載清單")
         check(any(it.get("items") for it in m["items"]), "有「連到其他翻譯伺服器」子選單")
+        srv = [it for it in m["items"] if it.get("items")][0]
+        st_ = [x["title"] for x in srv["items"]]
+        check(srv["title"] == "連到雲端 API 或其他翻譯伺服器"
+              and st_[:3] == ["OpenAI（雲端 API）", "Claude（Anthropic 雲端 API）", "Gemini（Google 雲端 API）"],
+              "雲端 API 三家排在子選單最前面")
+        check(all("按用量付費" in x["hint"] and "字幕會送到" in x["hint"] for x in srv["items"][:3]),
+              "三家都寫明按用量付費、字幕會送出去")
+        check("刪除這台電腦存的 API 金鑰" in st_, "有刪除已存金鑰的選項")
 
         print("== 2. 換模型：啟動器換好")
         action("switch", mine)
@@ -459,6 +468,23 @@ def main():
         open(tlog, "w").close()
         ipc.cmd("loadfile", "av://lavfi:testsrc=duration=3")
         check(wait_for(lambda: "ft-engine-pause" in tlines(), 5), "通知翻譯腳本先別重試")
+
+        print("== 13. 雲端 API 設定：狀態列講明送到哪裡、按用量付費")
+        conf_path = cfg + "/script-opts/floattranslate.conf"
+        keep = open(conf_path, encoding="utf-8").read()
+        with open(conf_path, "a", encoding="utf-8") as f:
+            f.write("endpoint=https://api.anthropic.com/v1/messages\nmodel=claude-haiku-5-5\n"
+                    "provider=anthropic\nkey_ref=anthropic\n")
+        if os.path.exists(os.path.join(out, "open-menu.json")):
+            os.remove(os.path.join(out, "open-menu.json"))
+        ipc.cmd("script-binding", "kandong_settings/open-settings")
+        m13 = wait_for(menu, 5)
+        check(m13 and m13["items"][0]["title"] ==
+              "目前：雲端 API：Claude（模型 claude-haiku-5-5）· 字幕會送到 Claude、按用量付費",
+              "狀態列：" + (m13["items"][0]["title"] if m13 else ""))
+        s13 = [it for it in m13["items"] if it.get("items")][0]["items"] if m13 else []
+        check(any(x.get("active") and x["title"].startswith("Claude") for x in s13), "目前用的那一家有標記")
+        open(conf_path, "w", encoding="utf-8").write(keep)
 
         log = open(os.path.join(out, "mpv.log"), encoding="utf-8", errors="replace").read()
         errs = [l for l in log.splitlines() if "kandong_settings" in l and ("error" in l.lower() or "stack traceback" in l)]

@@ -61,6 +61,7 @@ mkdir -p "${WORK}/ui-win/vendor" && cp "${WORK}/vendor/uosc.zip" "${WORK}/ui-win
 bash "${WORK}/ui-win/install-uosc.sh" "${W}/portable_config" >/dev/null
 rm -f "${W}/portable_config/scripts/uosc/bin/ziggy-darwin" "${W}/portable_config/scripts/uosc/bin/ziggy-linux"
 cp "${REPO}/scripts/floattranslate.lua" "${REPO}/scripts/kandong_settings.lua" "${W}/portable_config/scripts/"
+mkdir -p "${W}/portable_config/script-modules" && cp "${REPO}/script-modules/"*.lua "${W}/portable_config/script-modules/"
 cp "${REPO}/script-opts/floattranslate.conf" "${REPO}/script-opts/kandong_settings.conf" "${W}/portable_config/script-opts/"
 
 # 內附引擎（固定版本、驗 SHA256）：llama.cpp b10204（與 Mac 實測同版）Vulkan 版＋whisper.cpp b5454
@@ -94,7 +95,7 @@ python3 "${REPO}/packaging/mkzip.py" "${OUT}/KanDong-windows-x64.zip" "${WORK}/w
 # ── Mac：設定＋啟動器（mpv 用 Homebrew 裝）──
 M="${WORK}/mac/KanDong"
 mkdir -p "${M}/ui/vendor"
-cp -R "${REPO}/scripts" "${REPO}/script-opts" "${REPO}/mac" "${REPO}/server" "${M}/"
+cp -R "${REPO}/scripts" "${REPO}/script-modules" "${REPO}/script-opts" "${REPO}/mac" "${REPO}/server" "${M}/"
 cp "${REPO}/ui/"*.conf "${REPO}/ui/uosc-zh-TW.json" "${REPO}/ui/install-uosc.sh" "${M}/ui/"
 cp "${WORK}/vendor/uosc.zip" "${M}/ui/vendor/"
 cp "${REPO}/packaging/mac-README.txt" "${M}/使用說明.txt"

@@ -16,12 +16,33 @@ local mp = require "mp"
 local utils = require "mp.utils"
 local msg = require "mp.msg"
 local options = require "mp.options"
+-- 雲端 API 與金鑰存放（~~/script-modules/kandong_cloud.lua）
+-- 共用模組在設定資料夾的 script-modules（mpv 不會自動把它加進搜尋路徑）
+do
+    local dir = mp.command_native({ "expand-path", "~~/script-modules" })
+    if type(dir) == "string" and dir ~= "" and not package.path:find(dir, 1, true) then
+        package.path = dir .. "/?.lua;" .. package.path
+    end
+end
+local cloud_ok, cloud = pcall(require, "kandong_cloud")
+if not cloud_ok then
+    msg.warn("找不到 script-modules/kandong_cloud.lua，雲端 API 模式停用：" .. tostring(cloud))
+    cloud = nil
+end
 
 local opts = {
     -- 翻譯伺服器（OpenAI-compatible /v1/chat/completions）
     endpoint = "http://127.0.0.1:8080/v1/chat/completions",
-    api_key = "",
+    api_key = "",           -- 舊版設定相容用；新版金鑰存在系統的加密存放區（見 key_ref）
     model = "tencent/Hy-MT2-7B-GGUF",
+    -- 雲端 API：openai／anthropic／google；空白＝OpenAI 相容伺服器（本機引擎、Ollama、LM Studio、區網）
+    provider = "",
+    -- 金鑰在 Mac 鑰匙圈／Windows 加密存放區裡的名字（openai／anthropic／google／custom）；空白＝不用金鑰
+    key_ref = "",
+    -- 雲端模型的思考程度（設定選單試出這個模型接受的最快一檔；空白＝不指定）
+    reasoning_effort = "",
+    -- 雲端 API 同時送幾句（本機引擎一次只能處理一句，固定 1）
+    cloud_concurrency = 3,
     -- 目標語（送給模型的描述字串；台灣繁中會啟用專屬 regression 範例）
     target_language = "Traditional Chinese as used in Taiwan",
     -- sidecar 檔名中的語言代碼
@@ -80,7 +101,11 @@ local state = {
     cues = {},              -- { {s=秒, e=秒, src=原文, tgt=譯文或nil}, ... }
     by_norm = {},           -- 正規化原文 -> cue index
     cursor = 1,             -- 預譯 worker 目前優先位置
-    busy = false,           -- 是否有請求在途
+    busy = false,           -- 即時模式：是否有請求在途
+    inflight = 0,           -- 預譯模式：在途請求數
+    pending = {},           -- 預譯模式：在途的 cue index
+    key = nil,              -- 從系統加密存放區讀出的金鑰（只在記憶體）
+    key_loading = false,    -- 正在讀金鑰（讀完才送翻譯）
     realtime = false,       -- 逐句即時模式（沒有字幕全文）
     rt_cache = {},          -- 即時模式 norm -> 譯文
     rt_context = {},        -- 即時模式滾動原文上下文
@@ -383,51 +408,69 @@ local function clean_response(text)
     return t
 end
 
--- callback(tgt 或 nil, err 或 nil)
+local function cloud_provider()
+    return cloud and opts.provider ~= "" and cloud.provider(opts.provider) and opts.provider or nil
+end
+
+-- 目前要用的金鑰：新版從系統加密存放區讀進記憶體；舊版設定檔裡的 api_key 照樣能用
+local function current_key()
+    if opts.key_ref ~= "" then return state.key end
+    return opts.api_key ~= "" and opts.api_key or nil
+end
+
+-- callback(tgt 或 nil, err 或 nil, retry 或 nil)
+--   retry=true：限流／忙線這類稍後重試就好的錯誤
 local function request_translation(text, context, callback)
-    local body = {
-        model = opts.model,
-        messages = { { role = "user", content = build_prompt(text, context) } },
-        max_tokens = opts.max_tokens,
-        temperature = 0.2,
-    }
-    local ok, encoded = pcall(utils.format_json, body)
-    if not ok or not encoded then
-        callback(nil, "request JSON encode failed")
-        return
-    end
-    local body_path = tmp_file(".json")
-    if not write_file(body_path, encoded) then
-        callback(nil, "cannot write temp request file")
-        return
-    end
-    local args = {
-        "curl", "-sS", "--max-time", tostring(opts.curl_timeout),
-        "-X", "POST", opts.endpoint,
-        "-H", "Content-Type: application/json",
-    }
-    if opts.api_key ~= "" then
-        args[#args + 1] = "-H"
-        args[#args + 1] = "Authorization: Bearer " .. opts.api_key
-    end
-    args[#args + 1] = "--data-binary"
-    args[#args + 1] = "@" .. body_path
-    mp.command_native_async({
-        name = "subprocess",
-        args = args,
-        capture_stdout = true,
-        capture_stderr = true,
-        playback_only = false,
-    }, function(success, result)
-        os.remove(body_path)
-        if not success or not result or result.status ~= 0 then
-            local err = result and result.stderr or "subprocess failed"
-            callback(nil, "curl: " .. tostring(err):sub(1, 200))
+    local prompt = build_prompt(text, context)
+    local pname = cloud_provider()
+    if pname then
+        local key = current_key()
+        if not key then
+            callback(nil, "還沒有 " .. cloud.PROVIDERS[pname].label .. " 的 API 金鑰：右鍵 → 設定 → 翻譯模型與伺服器")
             return
         end
-        local pok, parsed = pcall(utils.parse_json, result.stdout)
-        if not pok or type(parsed) ~= "table" then
-            callback(nil, "invalid JSON response: " .. tostring(result.stdout):sub(1, 120))
+        local function go(effort, second)
+            cloud.request(cloud.chat_spec(pname, key, opts.model, prompt, effort, opts.curl_timeout),
+                function(code, parsed, err)
+                    if code == 200 then
+                        local tgt = clean_response(cloud.chat_text(pname, parsed))
+                        if tgt then return callback(tgt, nil) end
+                        return callback(nil, "empty translation")
+                    end
+                    -- 模型換代後不認得記住的思考程度：拿掉這個參數再試一次
+                    if not second and effort ~= "" and cloud.effort_rejected(code, parsed) then
+                        msg.info("模型不接受 reasoning_effort=" .. effort .. "，改成不指定")
+                        opts.reasoning_effort = ""
+                        return go("", true)
+                    end
+                    local text_err, retry = cloud.explain(pname, code, parsed, err)
+                    callback(nil, text_err, retry)
+                end)
+        end
+        go(opts.reasoning_effort, false)
+        return
+    end
+
+    -- OpenAI 相容伺服器（本機引擎、Ollama、LM Studio、區網）
+    local headers = {}
+    local key = current_key()
+    if key then headers[#headers + 1] = "Authorization: Bearer " .. key end
+    local spec = {
+        url = opts.endpoint, headers = headers, timeout = opts.curl_timeout,
+        body = {
+            model = opts.model,
+            messages = { { role = "user", content = prompt } },
+            max_tokens = opts.max_tokens,
+            temperature = 0.2,
+        },
+    }
+    local function handle(code, parsed, err)
+        if not code then
+            callback(nil, "curl: " .. tostring(err))
+            return
+        end
+        if type(parsed) ~= "table" then
+            callback(nil, ("invalid JSON response (HTTP %d)"):format(code))
             return
         end
         if parsed.error then
@@ -443,6 +486,46 @@ local function request_translation(text, context, callback)
             return
         end
         callback(tgt, nil)
+    end
+    if cloud then
+        cloud.request(spec, handle)
+        return
+    end
+    -- 沒有共用模組（舊安裝）：照舊用暫存檔送
+    local ok, encoded = pcall(utils.format_json, spec.body)
+    local body_path = tmp_file(".json")
+    if not ok or not encoded or not write_file(body_path, encoded) then
+        callback(nil, "cannot write temp request file")
+        return
+    end
+    local args = { "curl", "-sS", "--max-time", tostring(opts.curl_timeout), "-X", "POST", opts.endpoint,
+                   "-H", "Content-Type: application/json", "--data-binary", "@" .. body_path }
+    mp.command_native_async({ name = "subprocess", args = args, capture_stdout = true,
+        capture_stderr = true, playback_only = false }, function(success, result)
+        os.remove(body_path)
+        if not success or not result or result.status ~= 0 then
+            return handle(nil, nil, tostring(result and result.stderr or "subprocess failed"):sub(1, 200))
+        end
+        local pok, parsed = pcall(utils.parse_json, result.stdout)
+        handle(200, pok and parsed or nil, nil)
+    end)
+end
+
+-- 從系統加密存放區讀金鑰（啟動時、換伺服器時）；讀完才開始送翻譯
+local schedule_worker
+local function load_key()
+    state.key = nil
+    if opts.key_ref == "" or not cloud then return end
+    state.key_loading = true
+    cloud.secret_read(opts.key_ref, function(key)
+        state.key_loading = false
+        state.key = key
+        if not key then
+            msg.warn("讀不到已存的 API 金鑰（" .. opts.key_ref .. "）")
+            osd("讀不到已存的 API 金鑰：右鍵 → 設定 → 翻譯模型與伺服器，重新貼上一次", 8)
+            return
+        end
+        if schedule_worker then schedule_worker() end
     end)
 end
 
@@ -512,7 +595,7 @@ end
 
 -- ===== 超前預譯 worker =====
 
-local schedule_worker -- 前向宣告
+-- schedule_worker 已在 load_key 前宣告（前向宣告）
 
 local function cue_index_at(time_pos)
     if not time_pos then return 1 end
@@ -524,10 +607,10 @@ end
 
 local function next_untranslated()
     for i = state.cursor, #state.cues do
-        if not state.cues[i].tgt then return i end
+        if not state.cues[i].tgt and not state.pending[i] then return i end
     end
     for i = 1, state.cursor - 1 do
-        if not state.cues[i].tgt then return i end
+        if not state.cues[i].tgt and not state.pending[i] then return i end
     end
     return nil
 end
@@ -541,14 +624,21 @@ local function build_context_for(idx)
     return ctx
 end
 
-local function on_translate_done(idx, file_key, tgt, err)
-    state.busy = false
-    if file_key ~= state.file_key then return end -- 已換檔，丟棄
+local function on_translate_done(idx, file_key, tgt, err, retry)
+    if file_key ~= state.file_key then return end -- 已換檔，丟棄（換檔時在途數已歸零）
+    state.inflight = math.max(0, state.inflight - 1)
+    state.pending[idx] = nil
     if err then
         state.consecutive_failures = state.consecutive_failures + 1
         msg.warn(("cue %d 翻譯失敗（連續 %d 次）：%s"):format(idx, state.consecutive_failures, err))
         if state.engine_paused then
             -- 換模型中：引擎正在重開，失敗是預期的；等設定選單通知就緒再繼續
+        elseif cloud_provider() and (retry or state.consecutive_failures >= opts.max_consecutive_failures) then
+            -- 雲端：限流／忙線短暫等一下；金鑰錯、額度用完這類要人處理的，講白話並暫停
+            state.cooldown_until = mp.get_time() + (retry and 10 or opts.failure_cooldown)
+            if not retry or state.consecutive_failures >= opts.max_consecutive_failures then
+                osd(err, 8)
+            end
         elseif state.consecutive_failures >= opts.max_consecutive_failures then
             state.cooldown_until = mp.get_time() + opts.failure_cooldown
             osd(("翻譯伺服器連線失敗，%d 秒後重試（檢查 %s）"):format(
@@ -572,19 +662,31 @@ local function on_translate_done(idx, file_key, tgt, err)
     schedule_worker()
 end
 
+local function concurrency_limit()
+    return cloud_provider() and math.max(1, math.floor(opts.cloud_concurrency)) or 1
+end
+
 schedule_worker = function()
-    if not state.enabled or state.realtime or state.busy then return end
+    if not state.enabled or state.realtime or state.key_loading then return end
     if mp.get_time() < state.cooldown_until then
-        mp.add_timeout(state.cooldown_until - mp.get_time() + 0.1, schedule_worker)
+        if not state.cooldown_timer then
+            state.cooldown_timer = mp.add_timeout(state.cooldown_until - mp.get_time() + 0.1, function()
+                state.cooldown_timer = nil
+                schedule_worker()
+            end)
+        end
         return
     end
-    local idx = next_untranslated()
-    if not idx then return end
-    state.busy = true
-    local file_key = state.file_key
-    request_translation(state.cues[idx].src, build_context_for(idx), function(tgt, err)
-        on_translate_done(idx, file_key, tgt, err)
-    end)
+    while state.inflight < concurrency_limit() do
+        local idx = next_untranslated()
+        if not idx then return end
+        state.inflight = state.inflight + 1
+        state.pending[idx] = true
+        local file_key = state.file_key
+        request_translation(state.cues[idx].src, build_context_for(idx), function(tgt, err, retry)
+            on_translate_done(idx, file_key, tgt, err, retry)
+        end)
+    end
 end
 
 -- ===== 即時模式（沒有字幕全文時逐句翻）=====
@@ -603,7 +705,7 @@ local function realtime_translate(norm, src)
             msg.warn("即時翻譯失敗：" .. err)
             if not state.engine_paused and state.consecutive_failures >= opts.max_consecutive_failures then
                 state.cooldown_until = mp.get_time() + opts.failure_cooldown
-                osd("翻譯伺服器連線失敗，暫停重試", 5)
+                osd(cloud_provider() and err or "翻譯伺服器連線失敗，暫停重試", 5)
             end
             return
         end
@@ -1088,6 +1190,8 @@ local function reset_for_new_file()
     state.by_norm = {}
     state.cursor = 1
     state.busy = false
+    state.inflight = 0
+    state.pending = {}
     state.realtime = false
     state.rt_cache = {}
     state.rt_context = {}
@@ -1233,16 +1337,23 @@ mp.register_script_message("ft-engine-ready", function()
 end)
 
 -- 改連其他翻譯伺服器（設定選單已實際測過一句才送來）
-mp.register_script_message("ft-server-changed", function(endpoint, model, api_key)
+-- 參數：endpoint model api_key provider key_ref reasoning_effort（金鑰本身不經過這裡，翻譯腳本自己去讀）
+mp.register_script_message("ft-server-changed", function(endpoint, model, api_key, provider, key_ref, effort)
     if not endpoint or endpoint == "" then return end
     opts.endpoint = endpoint
     opts.model = model or opts.model
     opts.api_key = api_key or ""
+    opts.provider = provider or ""
+    opts.key_ref = key_ref or ""
+    opts.reasoning_effort = effort or ""
     state.engine_paused = false
     state.consecutive_failures = 0
     state.cooldown_until = 0
     msg.info("翻譯伺服器改為 " .. opts.endpoint .. "（模型 " .. opts.model .. "）")
+    load_key()
     schedule_worker()
 end)
+
+load_key()
 
 msg.info("看懂 KanDong 已載入。Ctrl+t 翻譯開關｜←→ 進退5秒｜1–5 倍速 0.5x/1x/1.5x/2x/3x｜A/D 減/加速10%、S 回1x｜↑↓ 音量±5｜-/= 字幕縮放。endpoint=" .. opts.endpoint)

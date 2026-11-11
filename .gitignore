@@ -6,3 +6,4 @@ logs/
 *.ft.*.json
 *.ft.*.srt
 *.ft.asr.*
+__pycache__/
