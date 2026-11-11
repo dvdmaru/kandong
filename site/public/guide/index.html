@@ -117,7 +117,7 @@ document.addEventListener('click', function (e) {
     <div style="margin-bottom: 56px">
       <div style="width: 52px; height: 52px; border-radius: 50%; background: #f4e1dd; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">2</div>
       <h3 style="font-size: 26px; font-weight: 900; margin: 14px 0 8px">拿翻譯模型（只要一次）</h3>
-      <p style="margin: 0 0 24px; color: #5a4845; max-width: 44em">模型就是「翻譯的大腦」，檔案比較大，所以沒有直接包進下載檔。三種拿法選一種：</p>
+      <p style="margin: 0 0 24px; color: #5a4845; max-width: 44em">模型就是「翻譯的大腦」，檔案比較大，所以沒有直接包進下載檔。三種拿法選一種；不想下載模型，也可以改用雲端 API（D）：</p>
       <div style="display: flex; flex-wrap: wrap; gap: 24px">
         <div style="flex: 1 1 100%; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff; box-shadow: 4px 4px 0 #f5b83d">
           <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">A. 在播放器裡下載（最簡單）</p>
@@ -129,7 +129,7 @@ document.addEventListener('click', function (e) {
   <span style="background: #f5b83d; color: #201914; padding: 0 4px">下載 Hy-MT2 7B（標準）</span>
   下載 Hy-MT2 1.8B（輕量）
   下載 語音辨識模型（Whisper）</div>
-          <p style="margin: 10px 0 0; font-size: 13px; color: #786866">示意圖：設定選單的下載區（實際會多顯示檔案大小）。同一個選單也能換模型，或改連 Ollama、LM Studio 等其他翻譯服務。</p>
+          <p style="margin: 10px 0 0; font-size: 13px; color: #786866">示意圖：設定選單的下載區（實際會多顯示檔案大小）。同一個選單也能換模型，或改用雲端 API、改連 Ollama、LM Studio 等其他翻譯服務。</p>
         </div>
         <div style="flex: 1 1 400px; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff">
           <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">B. 一鍵下載（先下載好再開）</p>
@@ -156,6 +156,20 @@ document.addEventListener('click', function (e) {
             </table>
           </div>
           <p style="margin: 12px 0 0; font-size: 13px; color: #786866">完整檔名與 SHA256 校驗碼在 models 資料夾的「把模型放這裡.txt」。</p>
+        </div>
+        <div style="flex: 1 1 100%; min-width: 0; border: 2px solid #201914; border-radius: 16px; padding: 22px; background: #ffffff">
+          <p style="margin: 0 0 4px; font-weight: 900; font-size: 20px">D. 不下載模型，改用雲端 API（要付費）</p>
+          <p style="margin: 0 0 10px; color: #5a4845; font-size: 15px">0.4.0 起可以改用 OpenAI、Claude（Anthropic）或 Gemini（Google）翻譯：不必下載翻譯模型，記憶體不夠或電腦較舊也翻得好。要<strong style="color: #201914">自己的 API 金鑰、按用量付費</strong>，而且<strong style="color: #201914">字幕文字會送到你選的那一家</strong>；影片和聲音不會送出去。</p>
+          <p style="margin: 0 0 14px; color: #5a4845; font-size: 15px">① 到那一家的後台（platform.openai.com、console.anthropic.com 或 aistudio.google.com）建立並<strong style="color: #201914">複製</strong> API 金鑰。② 雙擊「看懂」，按右鍵 → 設定 → 翻譯模型與伺服器 →「連到雲端 API 或其他翻譯伺服器」，點那一家（看懂會讀剪貼簿裡的金鑰）。③ 選標「推薦」的模型；先試翻一句，成功才改用。</p>
+          <div style="background: #14100e; color: #e8e2dc; border-radius: 10px; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; white-space: pre-wrap">連到雲端 API 或其他翻譯伺服器
+  <span style="background: #f5b83d; color: #201914; padding: 0 4px">OpenAI（雲端 API）</span>        要 API 金鑰 · 按用量付費 · 字幕會送到 OpenAI
+  Claude（Anthropic 雲端 API）
+  Gemini（Google 雲端 API）
+  Ollama（這台電腦）
+  LM Studio（這台電腦）
+  自己輸入網址…
+  刪除這台電腦存的 API 金鑰</div>
+          <p style="margin: 10px 0 0; font-size: 13px; color: #786866">示意圖：設定選單的伺服器區。模型清單每次都向那一家即時查詢。金鑰存在 Mac 鑰匙圈或 Windows 的加密存放區，不放在看懂資料夾裡；「改回這台電腦內建的翻譯模型」可以隨時切回本機。沒字幕的片仍要在這台電腦做語音辨識，需要下載語音辨識模型。</p>
         </div>
       </div>
     </div>

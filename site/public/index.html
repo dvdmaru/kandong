@@ -50,7 +50,7 @@ document.addEventListener('click', function (e) {
 <link rel="stylesheet" href="/site.css">
 
 <!-- editorial-faq:start -->
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "要錢嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。"}}, {"@type": "Question", "name": "影片或字幕會被上傳嗎？", "acceptedAnswer": {"@type": "Answer", "text": "預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。"}}, {"@type": "Question", "name": "這是看片網站嗎？能看 Netflix 嗎？", "acceptedAnswer": {"@type": "Answer", "text": "都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。"}}, {"@type": "Question", "name": "我的電腦跑得動嗎？", "acceptedAnswer": {"@type": "Answer", "text": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。"}}, {"@type": "Question", "name": "翻得準嗎？", "acceptedAnswer": {"@type": "Answer", "text": "人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "要錢嗎？", "acceptedAnswer": {"@type": "Answer", "text": "不用。看懂是 MIT 授權的開源軟體；翻譯模型 Hy-MT2 是 Apache-2.0，引擎 llama.cpp、whisper.cpp 都是 MIT。"}}, {"@type": "Question", "name": "影片或字幕會被上傳嗎？", "acceptedAnswer": {"@type": "Answer", "text": "預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦；若改用雲端 API（OpenAI、Claude 或 Gemini），字幕文字會送到你選的那一家，影片和聲音仍留在自己的電腦。"}}, {"@type": "Question", "name": "這是看片網站嗎？能看 Netflix 嗎？", "acceptedAnswer": {"@type": "Answer", "text": "都不是。看懂只播你電腦裡的影片檔，不提供影片、不下載字幕、不攔截串流、不破解 DRM。"}}, {"@type": "Question", "name": "我的電腦跑得動嗎？", "acceptedAnswer": {"@type": "Answer", "text": "記憶體 16GB 用標準模型（翻得比較好）；8GB 或較舊的電腦用輕量模型，快很多。README 實測 Apple M4／16GB、含 12 句前文，7B 每句約 1–1.5 秒，有字幕的片會超前預譯。"}}, {"@type": "Question", "name": "翻得準嗎？", "acceptedAnswer": {"@type": "Answer", "text": "人名常被音譯（例如 Marcus 變成「馬庫斯」），換大模型也可能發生；譯名修正仍在計畫中。機器翻譯難免出錯，重要內容請以原文為準。"}}]}</script>
 <!-- editorial-faq:end -->
 </head>
 <body>
@@ -71,7 +71,7 @@ document.addEventListener('click', function (e) {
       </div>
       <h1 style="font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: clamp(40px, 8vw, 64px); font-size: clamp(30px, 12cqi, 64px); line-height: 1.2; margin: 0 0 20px; letter-spacing: 0.01em">影片沒中文字幕？<br><span style="display: inline-block; background: #f5b83d; color: #201914; padding: 0 12px; border-radius: 6px; transform: rotate(-1.5deg); margin-top: 8px">一看就懂。</span></h1>
       <p style="font-size: 20px; margin: 0 0 10px; max-width: 34em">看懂是一個會「邊播邊翻譯」的影片播放器。外語片自動在原文字幕下方加上台灣繁中譯文；沒字幕的片，先聽寫出字幕再翻譯。</p>
-      <p style="font-size: 15px; color: #5a4845; margin: 0 0 28px; max-width: 36em">播你自己的影片檔：不提供影片、不下載字幕。翻譯在你自己的電腦上跑，影片和字幕不會上傳到任何地方。</p>
+      <p style="font-size: 15px; color: #5a4845; margin: 0 0 28px; max-width: 36em">播你自己的影片檔：不提供影片、不下載字幕。翻譯預設在你自己的電腦上跑，影片和字幕不會上傳；也可以自選雲端 API。</p>
       <div id="download" style="display: flex; gap: 12px; flex-wrap: wrap">
         <a href="https://github.com/dvdmaru/kandong/releases/latest/download/KanDong-windows-x64.zip" data-dl="windows" style="display: flex; flex-direction: column; text-decoration: none; background: #7c4241; color: #fff8f2; padding: 14px 22px; border-radius: 12px; min-width: 220px; border: 2px solid #201914; box-shadow: 4px 4px 0 #201914">
           <span style="font-weight: 900; font-size: 19px">下載 Windows 版</span>
@@ -125,7 +125,7 @@ document.addEventListener('click', function (e) {
       <div style="background: #ffffff; border: 2px solid #201914; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0 #201914">
         <div style="width: 52px; height: 52px; border-radius: 50%; background: #f4e1dd; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">2</div>
         <h3 style="font-size: 21px; margin: 16px 0 6px; font-weight: 900">拿翻譯模型</h3>
-        <p style="margin: 0; color: #5a4845; font-size: 15px">雙擊「一鍵下載模型」；也可以先做第 3 步，在播放器按右鍵 → 設定 → 翻譯模型與伺服器直接下載。只要做一次。</p>
+        <p style="margin: 0; color: #5a4845; font-size: 15px">雙擊「一鍵下載模型」；也可以先做第 3 步，在播放器按右鍵 → 設定 → 翻譯模型與伺服器直接下載。只要做一次。不想下載模型，也可以在同一個選單改用 OpenAI、Claude 或 Gemini 的雲端 API（要自己的金鑰、按用量付費）。</p>
       </div>
       <div style="background: #ffffff; border: 2px solid #201914; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0 #201914">
         <div style="width: 52px; height: 52px; border-radius: 50%; background: #e1efec; display: grid; place-items: center; font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 28px; border: 2px solid #201914">3</div>
@@ -187,7 +187,7 @@ document.addEventListener('click', function (e) {
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">影片或字幕會被上傳嗎？</summary>
-      <p style="margin: 10px 0 0; color: #5a4845">預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦。</p>
+      <p style="margin: 10px 0 0; color: #5a4845">預設本機設定下，翻譯和語音辨識在自己的電腦執行，影片和字幕不送到雲端翻譯服務。取得軟體、工具與模型仍需要網路；若自行設定區網伺服器，資料會送到指定電腦；若改用雲端 API（OpenAI、Claude 或 Gemini），字幕文字會送到你選的那一家，影片和聲音仍留在自己的電腦。</p>
     </details>
     <details style="border-top: 2px solid #201914; padding: 18px 0">
       <summary style="font-weight: 900; font-size: 18px; cursor: pointer">這是看片網站嗎？能看 Netflix 嗎？</summary>

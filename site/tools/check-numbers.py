@@ -34,6 +34,13 @@ def evidence(text, route):
         refs.append(f'[下載器編號、複選與 SHA256]({BASE}/mac/download-models.sh#L11-L80)；13 代表選項 1 與 3，不是數量')
     if text in ('1', '2', '3') or route == '/guide/' and any(text.startswith(f'{n}. ') for n in range(3)):
         refs.append('頁面操作步驟編號；編輯排序，不是外部事實或實測')
+    import re as _re
+    if _re.search(r'第 \d 步', text):
+        refs.append('頁面操作步驟編號；編輯排序，不是外部事實或實測')
+    if _re.search(r'0\.[34]\.0', text):
+        refs.append('[CHANGELOG 版本紀錄](https://github.com/dvdmaru/kandong/blob/main/CHANGELOG.md)；版本號，不是實測')
+    if '1,500 句' in text or '0.1–0.2 美元' in text:
+        refs.append('[README 雲端 API 費用估算](https://github.com/dvdmaru/kandong/blob/main/README.md)；以每句約 600 token 推算的估算，不是實際帳單，頁面已註明以各家帳單為準')
     return list(dict.fromkeys(refs))
 
 

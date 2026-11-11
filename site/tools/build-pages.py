@@ -8,10 +8,11 @@ BASE = 'https://kandong.twtools.cc'
 DATE = '2026-10-24'
 STAMP = DATE + 'T23:45:00+08:00'
 # 內容有改過的頁面：sitemap lastmod 與 dateModified 用這裡的日期，沒列到的沿用 DATE
-UPDATED = {path: '2026-11-05' for path in ('/', '/guide/', '/faq/', '/articles/auto-chinese-subtitles/')}
+UPDATED = {'/articles/auto-chinese-subtitles/': '2026-11-05', **{path: '2026-11-12' for path in ('/', '/guide/', '/faq/')}}
 REV = '7effeb9e3da2fde611f6f068cf71198e98e6a9ff'
 REPO = f'https://github.com/dvdmaru/kandong/blob/{REV}'
 README = REPO + '/README.md'
+README_MAIN = 'https://github.com/dvdmaru/kandong/blob/main/README.md'
 DOWNLOAD = 'https://github.com/dvdmaru/kandong/releases/latest'
 
 
@@ -115,10 +116,11 @@ PAGES = [
 FAQ = [
     ('models', '8GB／16GB 記憶體，各選哪個模型？', f'''<p>依 README 建議：8GB 或較舊的電腦選 Hy-MT2 1.8B 輕量模型，16GB 以上選 7B 標準模型。模型檔分別約 1.1GB、4.6GB；這是檔案大小，不是整套程式的記憶體用量。</p><p>README 的實測條件是 Apple M4／16GB、含 12 句前文：7B 每句約 1–1.5 秒，1.8B 約 0.25 秒。這些結果不能推算成其他硬體或整部影片的處理時間。</p><p>要先減輕負擔，可從輕量模型開始；想用標準模型，仍需看其他程式占用的記憶體。{link(README, '查看 README 的模型與實測說明')}。</p>'''),
     ('hy-mt2', 'Hy-MT2 是什麼？能直接聽影片嗎？', f'''<p>Hy-MT2 是騰訊（Tencent）公開的多語翻譯模型。看懂用它把原文字幕翻成台灣繁中；聽音訊轉文字則由 whisper.cpp 負責。沒字幕的影片需要兩種模型，不能只準備翻譯模型。</p><p>{link('https://huggingface.co/tencent/Hy-MT2-7B-GGUF', '騰訊官方標準模型卡')}、{link('https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF', '輕量模型卡')}。</p>'''),
-    ('switch', '怎麼換模型？可以用自己的模型或 Ollama 嗎？', '<p>0.3.0 起，在播放器按右鍵 → 設定 → 翻譯模型與伺服器：找得到的模型會列在上面，點一下就換。引擎重開期間會暫停翻譯，新模型開不起來會自動換回原本的。內建的標準、輕量與語音辨識模型也能在這裡直接下載，中斷了下次接著下。沒選過時，兩個翻譯模型都在就依記憶體自動挑選。</p><p>自己的 GGUF 模型放進 models 資料夾就會出現在清單；已經在用 Ollama、LM Studio 或區網另一台電腦的翻譯服務，選「連到其他翻譯伺服器」，會先實際翻一句測試，成功才改用。看懂的翻譯指令是為 Hy-MT2 調的，其他模型翻得好不好要自己試；連到別台電腦時，字幕會送到那台處理。播放中換模型要用「看懂」啟動。</p>'),
+    ('switch', '怎麼換模型？可以用自己的模型或 Ollama 嗎？', '<p>0.3.0 起，在播放器按右鍵 → 設定 → 翻譯模型與伺服器：找得到的模型會列在上面，點一下就換。引擎重開期間會暫停翻譯，新模型開不起來會自動換回原本的。內建的標準、輕量與語音辨識模型也能在這裡直接下載，中斷了下次接著下。沒選過時，兩個翻譯模型都在就依記憶體自動挑選。</p><p>自己的 GGUF 模型放進 models 資料夾就會出現在清單；已經在用 Ollama、LM Studio 或區網另一台電腦的翻譯服務，選「連到雲端 API 或其他翻譯伺服器」，會先實際翻一句測試，成功才改用。看懂的翻譯指令是為 Hy-MT2 調的，其他模型翻得好不好要自己試；連到別台電腦時，字幕會送到那台處理。播放中換模型要用「看懂」啟動。</p>'),
+    ('cloud', '可以用 OpenAI、Claude 或 Gemini 的 API 翻譯嗎？要錢嗎？', f'<p>0.4.0 起可以，使用者自選、本機模型照舊。先到那一家後台複製 API 金鑰，再到右鍵 → 設定 → 翻譯模型與伺服器 →「連到雲端 API 或其他翻譯伺服器」點那一家；看懂會向那一家即時查目前有哪些模型，便宜又快的標「推薦」，先試翻一句成功才改用。</p><p>要自己的金鑰、按各家用量付費。依 README 的估算，一部兩小時的片約 1,500 句字幕，用推薦的小模型約 0.1–0.2 美元，實際以各家帳單為準。字幕文字會送到你選的那一家；影片和聲音不送出，沒字幕的片仍在自己的電腦做語音辨識。金鑰存在 Mac 鑰匙圈或 Windows 的加密存放區，不放在看懂資料夾裡，同一個選單可以刪除。{link(README_MAIN, "README 的雲端 API 說明")}。</p>'),
     ('names', '人名會保留原文嗎？換大模型能解決嗎？', '<p>不保證。Hy-MT2 常把人名音譯，例如 Marcus 變成「馬庫斯」；換大模型也可能發生。譯名修正還在規劃中。</p>'),
     ('platforms', '支援哪些電腦？可以看 Netflix 嗎？', '<p>下載包提供 Windows 10／11（64 位元）與 macOS Apple 晶片版；Mac 需要先裝 Homebrew 工具。看懂只處理本機影片檔，不支援 Netflix 等串流平台，不攔截串流，也不破解 DRM。</p>'),
-    ('privacy', '影片和字幕會上傳嗎？需要一直連網嗎？', '<p>預設本機設定下，翻譯與語音辨識在自己的電腦執行，影片和字幕不會送到雲端翻譯服務；取得軟體、工具和模型仍需要網路。進階設定若把伺服器指向區網另一台電腦，字幕或聽寫用音訊就會送到那台電腦處理，因此本機處理的前提也會改變。</p>'),
+    ('privacy', '影片和字幕會上傳嗎？需要一直連網嗎？', '<p>預設本機設定下，翻譯與語音辨識在自己的電腦執行，影片和字幕不會送到雲端翻譯服務；取得軟體、工具和模型仍需要網路。進階設定若把伺服器指向區網另一台電腦，字幕或聽寫用音訊就會送到那台電腦處理；若改用雲端 API（OpenAI、Claude 或 Gemini），字幕文字會送到你選的那一家，影片和聲音仍留在自己的電腦。這兩種情況下本機處理的前提都會改變。</p>'),
     ('bitmap', '影片看得到字幕，為什麼還要語音辨識模型？', f'<p>看得到的字可能是 PGS 等圖形字幕，或已燒錄在影像中。看懂不做 OCR；沒有可用文字軌時，改從聲音聽寫再翻譯。先看 {link("/articles/mkv-bilingual-subtitles/", "MKV 字幕類型的分辨方式")}。</p>'),
     ('connection', '出現「翻譯伺服器連線失敗」怎麼辦？', '<p>先確認是用「看懂」啟動器開啟，而非直接開播放器執行檔。啟動器會先準備翻譯引擎；若仍失敗，再查模型檔、啟動畫面與 logs 記錄。</p>'),
     ('speed', '語音辨識跟不上，字幕一直空白怎麼辦？', f'<p>先按 S 回到正常播放速度，確認 Whisper 語音辨識模型已備妥，再讓聽寫繼續。播放超過處理進度或跳轉到未處理段落時可能空白；完整步驟見{link("/articles/auto-chinese-subtitles/", "沒字幕影片聽寫教學")}。</p>'),
@@ -169,7 +171,7 @@ SITE_FOOTER = ('<footer class="site-footer"><div class="bar">\n'
                '</div></footer>')
 
 FAQ_GROUPS = [
-    ('g-models', '選模型', 'sun', ['models', 'hy-mt2', 'switch']),
+    ('g-models', '選模型', 'sun', ['models', 'hy-mt2', 'switch', 'cloud']),
     ('g-platform', '支援與隱私', 'rose', ['platforms', 'privacy']),
     ('g-trouble', '字幕沒出現', 'mint', ['bitmap', 'connection', 'speed']),
     ('g-result', '翻譯結果', 'paper', ['names', 'cache']),
@@ -293,7 +295,7 @@ routes = ['/', '/guide/', '/articles/'] + ['/articles/' + p['slug'] + '/' for p 
 (PUBLIC / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{BASE}{r}</loc><lastmod>{UPDATED.get(r, DATE)}</lastmod></url>\n' for r in routes) + '</urlset>\n')
 (PUBLIC / 'llms.txt').write_text(f'''# 看懂 KanDong
 
-> 免費開源的本機影片播放器；翻譯文字字幕，或先聽寫無字幕音訊再翻成台灣繁中。預設由使用者自己的電腦處理。不提供影片、不下載字幕，不支援串流或破解 DRM。人名可能音譯。
+> 免費開源的本機影片播放器；翻譯文字字幕，或先聽寫無字幕音訊再翻成台灣繁中。預設由使用者自己的電腦處理；也可自選雲端 API（OpenAI、Claude、Gemini，使用者自己的金鑰、按用量付費，字幕文字會送到該供應商）。不提供影片、不下載字幕，不支援串流或破解 DRM。人名可能音譯。
 
 ## 產品與開始使用
 - [首頁與下載]({BASE}/)：產品能做什麼、Windows／Mac 下載與基本限制。
@@ -303,7 +305,7 @@ routes = ['/', '/guide/', '/articles/'] + ['/articles/' + p['slug'] + '/' for p 
 ## 影片與字幕問題
 ''' + ''.join(f'- [{p["title"]}]({BASE}/articles/{p["slug"]}/)：{p["description"]}\n' for p in PAGES) + f'''
 ## 使用支援
-- [常見問題]({BASE}/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、在播放器裡換模型與連其他伺服器、連線、快取與本機處理的前提。
+- [常見問題]({BASE}/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、在播放器裡換模型與連其他伺服器、雲端 API 選項與費用估算、連線、快取與本機處理的前提。
 - [原始碼與 README](https://github.com/dvdmaru/kandong)：功能、唯一引用的產品實測條件與已知限制。
 - [最新版]({DOWNLOAD})：取得播放器下載包。
 

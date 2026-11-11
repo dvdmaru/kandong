@@ -1,6 +1,6 @@
 # 看懂 KanDong
 
-> 免費開源的本機影片播放器；翻譯文字字幕，或先聽寫無字幕音訊再翻成台灣繁中。預設由使用者自己的電腦處理。不提供影片、不下載字幕，不支援串流或破解 DRM。人名可能音譯。
+> 免費開源的本機影片播放器；翻譯文字字幕，或先聽寫無字幕音訊再翻成台灣繁中。預設由使用者自己的電腦處理；也可自選雲端 API（OpenAI、Claude、Gemini，使用者自己的金鑰、按用量付費，字幕文字會送到該供應商）。不提供影片、不下載字幕，不支援串流或破解 DRM。人名可能音譯。
 
 ## 產品與開始使用
 - [首頁與下載](https://kandong.twtools.cc/)：產品能做什麼、Windows／Mac 下載與基本限制。
@@ -13,7 +13,7 @@
 - [沒字幕的影片怎麼自動產生中文字幕？先聽寫，再翻繁中](https://kandong.twtools.cc/articles/auto-chinese-subtitles/)：沒字幕的影片要先用 Whisper 把對白聽寫成原文，再用 Hy-MT2 翻成繁中；除了翻譯模型，還要多下載約 574MB 的語音辨識模型。
 
 ## 使用支援
-- [常見問題](https://kandong.twtools.cc/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、在播放器裡換模型與連其他伺服器、連線、快取與本機處理的前提。
+- [常見問題](https://kandong.twtools.cc/faq/)：8GB／16GB 模型建議、Hy-MT2 與 Whisper 分工、人名音譯、在播放器裡換模型與連其他伺服器、雲端 API 選項與費用估算、連線、快取與本機處理的前提。
 - [原始碼與 README](https://github.com/dvdmaru/kandong)：功能、唯一引用的產品實測條件與已知限制。
 - [最新版](https://github.com/dvdmaru/kandong/releases/latest)：取得播放器下載包。
 
