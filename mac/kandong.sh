@@ -186,6 +186,12 @@ case "${ENDPOINT:-http://127.0.0.1:${TPORT}/}" in
   *://127.0.0.1:${TPORT}/*|*://localhost:${TPORT}/*) LOCAL_ENGINE=1 ;;
   *) LOCAL_ENGINE=0 ;;
 esac
+# 語音辨識另外看 asr_endpoint：翻譯改用雲端 API 時，語音辨識仍在這台電腦跑
+ASR_ENDPOINT="$(conf_value "${CONF}" asr_endpoint)"
+case "${ASR_ENDPOINT:-http://127.0.0.1:${APORT}/}" in
+  *://127.0.0.1:${APORT}/*|*://localhost:${APORT}/*) LOCAL_ASR=1 ;;
+  *) LOCAL_ASR=0 ;;
+esac
 
 if [ "${LOCAL_ENGINE}" != "1" ]; then
   STATE="remote"
@@ -223,7 +229,7 @@ else
     fi
   fi
 fi
-if [ "${LOCAL_ENGINE}" = "1" ] && [ "${KANDONG_NO_ENGINE:-0}" != "1" ]; then start_asr; fi
+if [ "${LOCAL_ASR}" = "1" ] && [ "${KANDONG_NO_ENGINE:-0}" != "1" ]; then start_asr; fi
 write_status 0 "${STATE}" "${ENGINE_MODEL}" "${ENGINE_ERROR}"
 
 # ── 3. 接設定選單的要求 ──
